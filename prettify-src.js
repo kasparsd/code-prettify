@@ -168,11 +168,10 @@ var IN_GLOBAL_SCOPE = false;
         if (name == 'callback')  { callbacks.push(value);            }
       });
 
-  // Use https to avoid mixed content warnings in client pages and to
-  // prevent a MITM from rewrite prettify mid-flight.
-  // This only works if this script is loaded via https : something
-  // over which we exercise no control.
   var LOADER_BASE_URL = code_prettify_settings.base_url;
+
+  if (code_prettify_settings.skin)
+    skins.push(code_prettify_settings.skin);
   
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
@@ -1748,7 +1747,7 @@ var IN_GLOBAL_SCOPE = false;
               if (!nested) {
                 // Mark done.  If we fail to prettyprint for whatever reason,
                 // we shouldn't try again.
-                cs.className += ' prettyprinted';
+                cs.className += ' prettyprint prettyprinted';
     
                 // If the classes includes a language extensions, use it.
                 // Language extensions can be specified like
