@@ -2,6 +2,7 @@
 /*
 	Plugin Name: Code Prettify
 	Plugin URI: https://github.com/kasparsd/code-prettify
+    GitHub URI: https://github.com/kasparsd/code-prettify
 	Description: Automatic Syntax Highlighter
 	Version: 1.0
 	Author: Kaspars Dambis
