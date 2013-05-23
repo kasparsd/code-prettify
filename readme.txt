@@ -1,6 +1,6 @@
 === Code Prettify ===
 Contributors: kasparsd
-Tags: code, pre, highlighting, highlight, highlighter, syntax, synatax highlighting
+Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting
 Requires at least: 3.0
 Tested up to: 3.6
 Stable tag: 1.0
@@ -16,7 +16,7 @@ automatically to all `<pre>` tags on the page.
 
 == Installation ==
 
-Simplify upload the plugin and active it. It works out of the box and doesn't use an options panel.
+Simply upload the plugin and active it. It works out of the box and doesn't use an options panel.
 
 
 == Frequently Asked Questions ==
