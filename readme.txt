@@ -3,7 +3,7 @@ Contributors: kasparsd
 Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting
 Requires at least: 3.0
 Tested up to: 3.6
-Stable tag: 1.0
+Stable tag: 1.1
 
 100% automatic code highlighting using the Prettify library. No shortcodes, no bullshit.
 
