@@ -11,5 +11,24 @@
 add_action( 'wp_enqueue_scripts', 'add_prettify_scripts' );
 
 function add_prettify_scripts() {
-    wp_enqueue_script( 'code-prettify', '//google-code-prettify.googlecode.com/svn/loader/run_prettify.js' );
+    if ( WP_DEBUG )
+        $script = 'run_prettify-src.js';
+    else
+        $script = 'run_prettify.js';
+
+    wp_enqueue_script( 
+    	'code-prettify', 
+    	sprintf( '%s/%s/%s', WP_PLUGIN_URL, basename( __DIR__ ), $script ), 
+    	false, 
+    	false, 
+    	true 
+    );
+
+    wp_localize_script( 
+        'code-prettify', 
+        'code_prettify_settings', 
+        array( 
+            'base_url' => sprintf( '%s/%s', WP_PLUGIN_URL, basename( __DIR__ ) ) 
+        ) 
+   );
 }
