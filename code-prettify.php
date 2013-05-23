@@ -30,7 +30,7 @@ function add_prettify_scripts() {
 		'code_prettify_settings', 
 		array( 
 			'base_url' => sprintf( '%s/%s', WP_PLUGIN_URL, basename( __DIR__ ) ),
-			'skin' => apply_filters( 'prettify_skin', 'sunburst' )
+			'skin' => apply_filters( 'prettify_skin', false )
 		)
 	);
 }
