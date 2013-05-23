@@ -12,9 +12,9 @@ add_action( 'wp_enqueue_scripts', 'add_prettify_scripts' );
 
 function add_prettify_scripts() {
     if ( WP_DEBUG )
-        $script = 'run_prettify-src.js';
+        $script = 'prettify-src.js';
     else
-        $script = 'run_prettify.js';
+        $script = 'prettify.js';
 
     wp_enqueue_script( 
     	'code-prettify', 
