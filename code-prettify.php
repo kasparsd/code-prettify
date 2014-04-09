@@ -3,10 +3,10 @@
 	Plugin Name: Code Prettify
 	Plugin URI: https://github.com/kasparsd/code-prettify
 	GitHub URI: https://github.com/kasparsd/code-prettify
-	Description: Automatic Syntax Highlighter
-	Version: 1.3
+	Description: Automatic code syntax highlighter
+	Version: 1.3.1
 	Author: Kaspars Dambis
-	Author URI: http://konstruktors.com
+	Author URI: http://kaspars.net
 */
 
 add_action( 'wp_enqueue_scripts', 'add_prettify_scripts' );
