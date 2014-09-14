@@ -169,9 +169,6 @@ var IN_GLOBAL_SCOPE = false;
       });
 
   var LOADER_BASE_URL = code_prettify_settings.base_url;
-
-  if (code_prettify_settings.skin)
-    skins.push(code_prettify_settings.skin);
   
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
