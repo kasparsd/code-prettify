@@ -1,9 +1,10 @@
 === Code Prettify ===
-Contributors: kasparsd
-Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify
-Requires at least: 3.0
-Tested up to: 4.3
-Stable tag: trunk
+
+Contributors: kasparsd   
+Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify   
+Requires at least: 3.0   
+Tested up to: 4.3   
+Stable tag: trunk   
 
 100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, pure awesome.
 
@@ -16,7 +17,7 @@ automatically to all `<pre>` and `<code>` tags on the page.
 
 = Development =
 
-Plugin development on GitHub: https://github.com/kasparsd/code-prettify
+Plugin development on GitHub: [github.com/kasparsd/code-prettify](https://github.com/kasparsd/code-prettify)
 
 = Credits =
 
@@ -43,15 +44,18 @@ None, yet.
 == Changelog ==
 
 = 1.3.3 =
-* Update the Prettify library.
-* Highlight `<code>` blocks too.
+
+- Update the Prettify library.
+- Highlight `<code>` blocks too.
 
 = 1.0 =
-* Initial release.
+
+- Initial release.
 
 
 == Upgrade Notice ==
 
 = 1.0 =
+
 Initial release.
 
