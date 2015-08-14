@@ -24,15 +24,15 @@
 // | lang=            | language name | Loads the language handler   | Can    |
 // |                  |               | named "lang-<NAME>.js".      | appear |
 // |                  |               | See available handlers at    | many   |
-// |                  |               | http://code.google.com/p/    | times. |
-// |                  |               | google-code-prettify/source/ |        |
-// |                  |               | browse/trunk/src             |        |
+// |                  |               | https://github.com/google/   | times. |
+// |                  |               | code-prettify/tree/master/   |        |
+// |                  |               | src                          |        |
 // +------------------+---------------+------------------------------+--------+
 // | skin=            | skin name     | Loads the skin stylesheet    | none.  |
 // |                  |               | named "<NAME>.css".          |        |
-// |                  |               | http://code.google.com/p/    |        |
-// |                  |               | google-code-prettify/source/ |        |
-// |                  |               | browse/trunk/styles          |        |
+// |                  |               | https://cdn.rawgit.com/      |        |
+// |                  |               | google/code-prettify/master/ |        |
+// |                  |               | styles/index.html            |        |
 // +------------------+---------------+------------------------------+--------+
 // | callback=        | JS identifier | When "prettyPrint" finishes  | none   |
 // |                  |               | window.exports[js_ident] is  |        |
@@ -51,7 +51,7 @@
 //   2. Loads the sunburst.css stylesheet instead of the default prettify.css
 //      stylesheet.
 //      A gallery of stylesheets is available at
-//      https://google-code-prettify.googlecode.com/svn/trunk/styles/index.html
+//      https://cdn.rawgit.com/google/code-prettify/master/styles/index.html
 //   3. Since autorun=false is not specified, calls prettyPrint() on page load.
 
 
@@ -138,12 +138,13 @@ var IN_GLOBAL_SCOPE = false;
   // This starts looking at the end instead of just considering the last
   // because deferred and async scripts run out of order.
   // If the script is loaded twice, then this will run in reverse order.
-  for (var scripts = doc.scripts, i = scripts.length; --i >= 0;) {
+  var scripts = doc.getElementsByTagName('script');
+  for (var i = scripts.length; --i >= 0;) {
     var script = scripts[i];
     var match = script.src.match(
-        /^[^?#]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);
+        /^[^?#]*\/run_prettify(-src)?\.js(\?[^#]*)?(?:#.*)?$/);
     if (match) {
-      scriptQuery = match[1] || '';
+      scriptQuery = match[2] || '';
       // Remove the script from the DOM so that multiple runs at least run
       // multiple times even if parameter sets are interpreted in reverse
       // order.
@@ -168,8 +169,12 @@ var IN_GLOBAL_SCOPE = false;
         if (name == 'callback')  { callbacks.push(value);            }
       });
 
+  // Use https to avoid mixed content warnings in client pages and to
+  // prevent a MITM from rewrite prettify mid-flight.
+  // This only works if this script is loaded via https : something
+  // over which we exercise no control.
   var LOADER_BASE_URL = code_prettify_settings.base_url;
-  
+
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
 
@@ -232,13 +237,14 @@ var IN_GLOBAL_SCOPE = false;
     // See the License for the specific language governing permissions and
     // limitations under the License.
     
+    
     /**
      * @fileoverview
      * some functions for browser-side pretty printing of code contained in html.
      *
      * <p>
      * For a fairly comprehensive set of languages see the
-     * <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html#langs">README</a>
+     * <a href="https://github.com/google/code-prettify#for-which-languages-does-it-work">README</a>
      * file that came with this source.  At a minimum, the lexer should work on a
      * number of languages including C and friends, Java, Python, Bash, SQL, HTML,
      * XML, CSS, Javascript, and Makefiles.  It works passably on Ruby, PHP and Awk
@@ -323,12 +329,12 @@ var IN_GLOBAL_SCOPE = false;
           "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
           "instanceof,interface,null,native,package,strictfp,super,synchronized," +
           "throws,transient"];
-      var CSHARP_KEYWORDS = [JAVA_KEYWORDS,
-          "as,base,by,checked,decimal,delegate,descending,dynamic,event," +
-          "fixed,foreach,from,group,implicit,in,internal,into,is,let," +
-          "lock,object,out,override,orderby,params,partial,readonly,ref,sbyte," +
-          "sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort," +
-          "var,virtual,where"];
+      var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
+          "abstract,as,base,bool,by,byte,checked,decimal,delegate,descending," +
+          "dynamic,event,finally,fixed,foreach,from,group,implicit,in,interface," +
+          "internal,into,is,let,lock,null,object,out,override,orderby,params," +
+          "partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong," +
+          "unchecked,unsafe,ushort,var,virtual,where"];
       var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
           "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
           "throw,true,try,unless,until,when,while,yes";
@@ -1723,13 +1729,13 @@ var IN_GLOBAL_SCOPE = false;
                 }
               }
             }
-            
+    
             var className = cs.className;
             if (
                 // Don't redo this if we've already done it.
                 // This allows recalling pretty print to just prettyprint elements
                 // that have been added to the page since last call.
-               !prettyPrintedRe.test(className)) {
+                !prettyPrintedRe.test(className)) {
     
               // make sure this is not nested in an already prettified element
               var nested = false;
@@ -1744,7 +1750,7 @@ var IN_GLOBAL_SCOPE = false;
               if (!nested) {
                 // Mark done.  If we fail to prettyprint for whatever reason,
                 // we shouldn't try again.
-                cs.className += ' prettyprint prettyprinted';
+                cs.className += ' prettyprinted';
     
                 // If the classes includes a language extensions, use it.
                 // Language extensions can be specified like
