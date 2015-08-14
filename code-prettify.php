@@ -25,6 +25,8 @@ function add_prettify_scripts() {
 	if ( $skin )
 		$script_url = add_query_arg( 'skin', $skin, $script_url );
 
+	$script_url = apply_filters( 'code-prettify-js-url', $script_url );
+
 	wp_enqueue_script(
 		'code-prettify',
 		$script_url,
