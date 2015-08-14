@@ -1,4 +1,4 @@
-=== Code Prettify ===
+# Code Prettify
 
 Contributors: kasparsd   
 Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify   
@@ -9,53 +9,53 @@ Stable tag: trunk
 100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, pure awesome.
 
 
-== Description ==
+## Description
 
 Uses the [Google Code Prettify library](https://github.com/google/code-prettify) 
 that is minified and properly enqueued. Plugin applies code highlighting 
 automatically to all `<pre>` and `<code>` tags on the page.
 
-= Development =
+### Development
 
 Plugin development on GitHub: [github.com/kasparsd/code-prettify](https://github.com/kasparsd/code-prettify)
 
-= Credits =
+### Credits
 
 Created and maintained by [Kaspars Dambis](http://kaspars.net). All of my open source work is available [on GitHub](https://github.com/kasparsd).
 
 Use Contact Form 7? [Storage for Contact Form 7](http://codecanyon.net/item/storage-for-contact-form-7-/7806229) is my commercial plugin (GPL license) for storing all form submissions in your WordPress database.
 
 
-== Installation ==
+## Installation
 
 Simply upload the plugin and active it. It works out of the box and doesn't have any configuration options.
 
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions
 
 None, yet.
 
 
-== Screenshots ==
+## Screenshots
 
 1. Syntax highlighting applied to a `<pre>` block and inline `<code>` segments.
 
 
-== Changelog ==
+## Changelog
 
-= 1.3.3 =
+### 1.3.3
 
 - Update the Prettify library.
 - Highlight `<code>` blocks too.
 
-= 1.0 =
+### 1.0
 
 - Initial release.
 
 
-== Upgrade Notice ==
+## Upgrade Notice
 
-= 1.0 =
+### 1.0
 
 Initial release.
 

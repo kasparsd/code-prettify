@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Transform the readme
+if [ -f readme.md ]; then
+	cp readme.md readme.txt
+	sed -i '' -e 's/^# \(.*\)$/=== \1 ===/' -e 's/ #* ===$/ ===/' -e 's/^## \(.*\)$/== \1 ==/' -e 's/ #* ==$/ ==/' -e 's/^### \(.*\)$/= \1 =/' -e 's/ #* =$/ =/' readme.txt
+fi
