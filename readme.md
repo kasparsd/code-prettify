@@ -1,6 +1,6 @@
 # Code Prettify
 
-Contributors: kasparsd   
+Contributors: kasparsd , sorincoza  
 Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify   
 Requires at least: 3.0   
 Tested up to: 4.3   
@@ -30,7 +30,9 @@ Cover photo by [Yuri Samoilov](https://www.flickr.com/photos/110751683@N02/13334
 
 ## Installation
 
-Simply upload the plugin and active it. It works out of the box and doesn't have any configuration options.
+Simply upload the plugin and active it.
+
+If you want to change the looks of the code, go to plugin's settings page in Dashboard, and select desired skin. Additionally, you can add your custom skins in the `/prettify/skins` folder - the plugin will automatically recognize new skins.
 
 
 ## Frequently Asked Questions
@@ -44,6 +46,11 @@ None, yet.
 
 
 ## Changelog
+
+### 1.4
+
+- Added support for custom skins
+- Added settings page in Dashboard, where the user can select desired skin
 
 ### 1.3.3
 
