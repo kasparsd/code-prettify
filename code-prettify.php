@@ -41,6 +41,37 @@ function add_prettify_scripts() {
 		array(
 			'base_url' => plugins_url( 'prettify', __FILE__ )
 		)
-	);
+  );
 }
 
+function moonWalk($x, $leadingSpaces = 0) {
+  //Make sure we don't start or endwith new lines
+  $x = trim($x, "\r");
+  $x = trim($x, "\n");
+
+  // Find how many leading spaces are in the first line
+  $spacesToRemove = strlen($x) - strlen(ltrim($x)) - $leadingSpaces;
+  // Break up by new lines
+  $lines = explode("\n", $x);
+  
+  // Remove that many leading spaces from the beginning of each string
+  for($x = 0; $x < sizeof($lines); $x++) {
+    // Remove each space
+    $lines[$x] = preg_replace('/\s/', "", $lines[$x], $spacesToRemove);
+  }
+  // Put back into string on seperate lines
+  return implode("\n", $lines);
+}
+
+function pre_moonwalk($content) {
+  return preg_replace_callback(
+    '#(<pre.*?prettyprint.*?>)(.*?)(</pre>)#imsu',
+    create_function(
+      '$i',
+      'return $i[1].moonWalk($i[2]).$i[3];'
+    ),
+    $content
+  );
+}
+
+add_filter( 'the_content', 'pre_moonwalk');
