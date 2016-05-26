@@ -3,7 +3,7 @@
 Contributors: kasparsd   
 Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify   
 Requires at least: 3.0   
-Tested up to: 4.3   
+Tested up to: 4.5.2   
 Stable tag: trunk   
 
 100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, pure awesome.
@@ -11,8 +11,8 @@ Stable tag: trunk
 
 ## Description
 
-Uses the [Google Code Prettify library](https://github.com/google/code-prettify) 
-that is minified and properly enqueued. Plugin applies code highlighting 
+Uses the [Google Code Prettify library](https://github.com/google/code-prettify)
+that is minified and properly enqueued. Plugin applies code highlighting
 automatically to all `<pre>` and `<code>` tags on the page.
 
 ### Development
@@ -45,6 +45,11 @@ None, yet.
 
 ## Changelog
 
+### 1.3.4
+
+- Update the Prettify library.
+- Ensure that Prettify styles are applied to the contents of `<pre>` and `<code>` elements.
+
 ### 1.3.3
 
 - Update the Prettify library.
@@ -60,4 +65,3 @@ None, yet.
 ### 1.0
 
 Initial release.
-
