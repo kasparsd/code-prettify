@@ -1815,11 +1815,7 @@ var IN_GLOBAL_SCOPE = false;
             }
 
             var className = cs.className;
-            if ((attrs !== EMPTY || prettyPrintRe.test(className))
-                // Don't redo this if we've already done it.
-                // This allows recalling pretty print to just prettyprint elements
-                // that have been added to the page since last call.
-                && !prettyPrintedRe.test(className)) {
+            if (!prettyPrintedRe.test(className)) {
 
               // make sure this is not nested in an already prettified element
               var nested = false;
