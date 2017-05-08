@@ -21,7 +21,7 @@ after_script:
 
 deploy:
   provider: script
-  script: wp-shuttle trunk
+  script: npm run deploy trunk
   on:
     php: 7.0
     branch: master
