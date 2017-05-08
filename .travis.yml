@@ -11,8 +11,7 @@ env:
 install:
   - nvm install node
   - npm install
-  - echo "$(npm bin)"
-  - echo $PATH
+  - find "$(npm bin)" -print
   - source $DEV_LIB_PATH/travis.install.sh
 
 script:
