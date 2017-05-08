@@ -1,0 +1,26 @@
+{
+  "name": "code-prettify",
+  "version": "1.0.0",
+  "description": "WordPress plugin for automatic code highlighting using the Prettify library.",
+  "scripts": {
+    "deploy": "wp-shuttle",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kasparsd/code-prettify.git"
+  },
+  "keywords": [
+    "wordpress"
+  ],
+  "author": "Kaspars Dambis",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/kasparsd/code-prettify/issues"
+  },
+  "homepage": "https://github.com/kasparsd/code-prettify#readme",
+  "devDependencies": {
+    "wp-dev-lib": "xwp/wp-dev-lib",
+    "wp-shuttle": "kasparsd/wp-shuttle"
+  }
+}
