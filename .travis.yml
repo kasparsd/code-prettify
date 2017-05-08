@@ -11,7 +11,7 @@ env:
 install:
   - nvm install node
   - npm install
-  - find "$(npm bin)" -print
+  - which wp-shuttle
   - source $DEV_LIB_PATH/travis.install.sh
 
 script:
