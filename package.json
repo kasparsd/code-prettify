@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/kasparsd/code-prettify#readme",
   "devDependencies": {
-    "wp-shuttle": "github:kasparsd/wp-shuttle"
+    "wp-shuttle": "kasparsd/wp-shuttle"
   }
 }
