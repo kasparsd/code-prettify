@@ -11,7 +11,6 @@ env:
 install:
   - nvm install node
   - npm install
-  - which wp-shuttle
   - source $DEV_LIB_PATH/travis.install.sh
 
 script:
@@ -22,7 +21,7 @@ after_script:
 
 deploy:
   provider: script
-  script: npm run deploy trunk
+  script: wp-shuttle trunk
   on:
     php: 7.0
     branch: master
