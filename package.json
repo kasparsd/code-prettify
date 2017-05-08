@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "WordPress plugin for automatic code highlighting using the Prettify library.",
   "scripts": {
+    "deploy": "wp-shuttle",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
