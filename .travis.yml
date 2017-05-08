@@ -11,6 +11,7 @@ env:
 install:
   - nvm install node
   - npm install
+  - export PATH=$PWD/node_modules/.bin:$PATH
   - source $DEV_LIB_PATH/travis.install.sh
 
 script:
