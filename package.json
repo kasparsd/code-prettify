@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/kasparsd/code-prettify#readme",
   "devDependencies": {
+    "wp-dev-lib": "xwp/wp-dev-lib",
     "wp-shuttle": "kasparsd/wp-shuttle"
   }
 }
