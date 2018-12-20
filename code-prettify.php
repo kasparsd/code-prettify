@@ -30,4 +30,10 @@ function add_prettify_scripts() {
 		'1.4.0',
 		true
 	);
+
+	wp_localize_script(
+		'code-prettify',
+		'codePrettifyLoaderBaseUrl',
+		plugins_url( 'prettify/dist', __FILE__ )
+	);
 }
