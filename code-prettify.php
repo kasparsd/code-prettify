@@ -15,8 +15,7 @@ function add_prettify_scripts() {
 	$script_url = plugins_url( 'prettify/run_prettify.js', __FILE__ );
 
 	$prettify_query_params = array_filter( array(
-		'skin' => apply_filters( 'prettify_skin', null ),
-		'autoload' => true,
+		'skin' => apply_filters( 'prettify_skin', null )
 	) );
 
 	if ( ! empty( $prettify_query_params ) ) {
