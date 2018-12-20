@@ -48,8 +48,8 @@
  * |                  |               | injection.                   |        |
  * +------------------+---------------+------------------------------+--------+
  *
- * Exmaples
- * .../prettify.js?lang=css&skin=sunburst
+ * Examples
+ * .../run_prettify.js?lang=css&skin=sunburst
  *   1. Loads the CSS language handler which can be used to prettify CSS
  *      stylesheets, HTML <style> element bodies and style="..." attributes
  *      values.
@@ -62,55 +62,56 @@
  */
 
 /**
-* @typedef {!Array.<number|string>}
-* Alternating indices and the decorations that should be inserted there.
-* The indices are monotonically increasing.
-*/
+ * @typedef {!Array.<number|string>}
+ * Alternating indices and the decorations that should be inserted there.
+ * The indices are monotonically increasing.
+ */
 var DecorationsT;
 
 /**
-* @typedef {!{
-*   sourceNode: !Element,
-*   pre: !(number|boolean),
-*   langExtension: ?string,
-*   numberLines: ?(number|boolean),
-*   sourceCode: ?string,
-*   spans: ?(Array.<number|Node>),
-*   basePos: ?number,
-*   decorations: ?DecorationsT
-* }}
-* <dl>
-*  <dt>sourceNode<dd>the element containing the source
-*  <dt>sourceCode<dd>source as plain text
-*  <dt>pre<dd>truthy if white-space in text nodes
-*     should be considered significant.
-*  <dt>spans<dd> alternating span start indices into source
-*     and the text node or element (e.g. {@code <BR>}) corresponding to that
-*     span.
-*  <dt>decorations<dd>an array of style classes preceded
-*     by the position at which they start in job.sourceCode in order
-*  <dt>basePos<dd>integer position of this.sourceCode in the larger chunk of
-*     source.
-* </dl>
-*/
+ * @typedef {!{
+ *   sourceNode: !Element,
+ *   pre: !(number|boolean),
+ *   langExtension: ?string,
+ *   numberLines: ?(number|boolean),
+ *   sourceCode: ?string,
+ *   spans: ?(Array.<number|Node>),
+ *   basePos: ?number,
+ *   decorations: ?DecorationsT
+ * }}
+ * <dl>
+ *  <dt>sourceNode<dd>the element containing the source
+ *  <dt>sourceCode<dd>source as plain text
+ *  <dt>pre<dd>truthy if white-space in text nodes
+ *     should be considered significant.
+ *  <dt>spans<dd> alternating span start indices into source
+ *     and the text node or element (e.g. {@code <BR>}) corresponding to that
+ *     span.
+ *  <dt>decorations<dd>an array of style classes preceded
+ *     by the position at which they start in job.sourceCode in order
+ *  <dt>basePos<dd>integer position of this.sourceCode in the larger chunk of
+ *     source.
+ * </dl>
+ */
 var JobT;
 
 /**
-* @typedef {!{
-*   sourceCode: string,
-*   spans: !(Array.<number|Node>)
-* }}
-* <dl>
-*  <dt>sourceCode<dd>source as plain text
-*  <dt>spans<dd> alternating span start indices into source
-*     and the text node or element (e.g. {@code <BR>}) corresponding to that
-*     span.
-* </dl>
-*/
+ * @typedef {!{
+ *   sourceCode: string,
+ *   spans: !(Array.<number|Node>)
+ * }}
+ * <dl>
+ *  <dt>sourceCode<dd>source as plain text
+ *  <dt>spans<dd> alternating span start indices into source
+ *     and the text node or element (e.g. {@code <BR>}) corresponding to that
+ *     span.
+ * </dl>
+ */
 var SourceSpansT;
 
 /** @define {boolean} */
 var IN_GLOBAL_SCOPE = false;
+
 
 (function () {
   "use strict";
@@ -195,9 +196,9 @@ var IN_GLOBAL_SCOPE = false;
   for (var i = scripts.length; --i >= 0;) {
     var script = scripts[i];
     var match = script.src.match(
-        /^[^?#]*\/run_prettify(-src)?\.js(\?[^#]*)?(?:#.*)?$/);
+        /^[^?#]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);
     if (match) {
-      scriptQuery = match[2] || '';
+      scriptQuery = match[1] || '';
       // Remove the script from the DOM so that multiple runs at least run
       // multiple times even if parameter sets are interpreted in reverse
       // order.
@@ -226,7 +227,8 @@ var IN_GLOBAL_SCOPE = false;
   // prevent a MITM from rewrite prettify mid-flight.
   // This only works if this script is loaded via https : something
   // over which we exercise no control.
-  var LOADER_BASE_URL = code_prettify_settings.base_url;
+  var LOADER_BASE_URL =
+     'https://cdn.rawgit.com/google/code-prettify/master/loader';
 
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
@@ -254,7 +256,7 @@ var IN_GLOBAL_SCOPE = false;
 
     script.type = 'text/javascript';
     script.src = LOADER_BASE_URL
-      + '/langs/lang-' + encodeURIComponent(langs[i]) + '.js';
+      + '/lang-' + encodeURIComponent(langs[i]) + '.js';
 
     // Circumvent IE6 bugs with base elements (#2709 and #4378) by prepending
     head.insertBefore(script, head.firstChild);
@@ -366,7 +368,10 @@ var IN_GLOBAL_SCOPE = false;
      * UI events.
      * If set to {@code false}, {@code prettyPrint()} is synchronous.
      */
-    window['PR_SHOULD_USE_CONTINUATION'] = true;
+    var PR_SHOULD_USE_CONTINUATION = true
+    if (typeof window !== 'undefined') {
+      window['PR_SHOULD_USE_CONTINUATION'] = PR_SHOULD_USE_CONTINUATION;
+    }
 
     /**
      * Pretty print a chunk of code.
@@ -391,37 +396,38 @@ var IN_GLOBAL_SCOPE = false;
 
 
     (function () {
-      var win = window;
+      var win = (typeof window !== 'undefined') ? window : {};
       // Keyword lists for various languages.
       // We use things that coerce to strings to make them compact when minified
       // and to defeat aggressive optimizers that fold large string constants.
       var FLOW_CONTROL_KEYWORDS = ["break,continue,do,else,for,if,return,while"];
       var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," +
-          "double,enum,extern,float,goto,inline,int,long,register,short,signed," +
+          "double,enum,extern,float,goto,inline,int,long,register,restrict,short,signed," +
           "sizeof,static,struct,switch,typedef,union,unsigned,void,volatile"];
       var COMMON_KEYWORDS = [C_KEYWORDS,"catch,class,delete,false,import," +
           "new,operator,private,protected,public,this,throw,true,try,typeof"];
-      var CPP_KEYWORDS = [COMMON_KEYWORDS,"alignof,align_union,asm,axiom,bool," +
+      var CPP_KEYWORDS = [COMMON_KEYWORDS,"alignas,alignof,align_union,asm,axiom,bool," +
           "concept,concept_map,const_cast,constexpr,decltype,delegate," +
           "dynamic_cast,explicit,export,friend,generic,late_check," +
-          "mutable,namespace,nullptr,property,reinterpret_cast,static_assert," +
+          "mutable,namespace,noexcept,noreturn,nullptr,property,reinterpret_cast,static_assert," +
           "static_cast,template,typeid,typename,using,virtual,where"];
       var JAVA_KEYWORDS = [COMMON_KEYWORDS,
           "abstract,assert,boolean,byte,extends,finally,final,implements,import," +
           "instanceof,interface,null,native,package,strictfp,super,synchronized," +
           "throws,transient"];
       var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
-          "abstract,as,async,await,base,bool,by,byte,checked,decimal,delegate,descending," +
-          "dynamic,event,finally,fixed,foreach,from,group,implicit,in,interface," +
-          "internal,into,is,let,lock,null,object,out,override,orderby,params," +
-          "partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong," +
-          "unchecked,unsafe,ushort,var,virtual,where"];
+          "abstract,add,alias,as,ascending,async,await,base,bool,by,byte,checked,decimal,delegate,descending," +
+          "dynamic,event,finally,fixed,foreach,from,get,global,group,implicit,in,interface," +
+          "internal,into,is,join,let,lock,null,object,out,override,orderby,params," +
+          "partial,readonly,ref,remove,sbyte,sealed,select,set,stackalloc,string,select,uint,ulong," +
+          "unchecked,unsafe,ushort,value,var,virtual,where,yield"];
       var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
           "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
           "throw,true,try,unless,until,when,while,yes";
       var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
-          "debugger,eval,export,function,get,instanceof,null,set,undefined," +
-          "var,with,Infinity,NaN"];
+          "abstract,async,await,constructor,debugger,enum,eval,export,from,function," +
+          "get,import,implements,instanceof,interface,let,null,of,set,undefined," +
+          "var,with,yield,Infinity,NaN"];
       var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
           "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
           "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
@@ -438,7 +444,7 @@ var IN_GLOBAL_SCOPE = false;
       var ALL_KEYWORDS = [
           CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS, JSCRIPT_KEYWORDS,
           PERL_KEYWORDS, PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
-      var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
+      var C_TYPES = /^(DIR|FILE|array|vector|(de|priority_)?queue|(forward_)?list|stack|(const_)?(reverse_)?iterator|(unordered_)?(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
 
       // token style names.  correspond to css classes
       /**
@@ -511,6 +517,14 @@ var IN_GLOBAL_SCOPE = false;
       var PR_NOCODE = 'nocode';
 
 
+      // Regex pattern below is automatically generated by regexpPrecederPatterns.pl
+      // Do not modify, your changes will be erased.
+
+      // CAVEAT: this does not properly handle the case where a regular
+      // expression immediately follows another since a regular expression may
+      // have flags for case-sensitivity and the like.  Having regexp tokens
+      // adjacent is not valid in any language I'm aware of, so I'm punting.
+      // TODO: maybe style special characters inside a regexp as punctuation.
 
       /**
        * A set of tokens that can precede a regular expression literal in
@@ -519,12 +533,12 @@ var IN_GLOBAL_SCOPE = false;
        * has the full list, but I've removed ones that might be problematic when
        * seen in languages that don't support regular expression literals.
        *
-       * <p>Specifically, I've removed any keywords that can't precede a regexp
+       * Specifically, I've removed any keywords that can't precede a regexp
        * literal in a syntactically legal javascript program, and I've removed the
        * "in" keyword since it's not a keyword in many languages, and might be used
        * as a count of inches.
        *
-       * <p>The link above does not accurately describe EcmaScript rules since
+       * The link above does not accurately describe EcmaScript rules since
        * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
        * very well in practice.
        *
@@ -533,11 +547,6 @@ var IN_GLOBAL_SCOPE = false;
        */
       var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[+\\-]=|->|\\/=?|::?|<<?=?|>>?>?=?|,|;|\\?|@|\\[|~|{|\\^\\^?=?|\\|\\|?=?|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
 
-      // CAVEAT: this does not properly handle the case where a regular
-      // expression immediately follows another since a regular expression may
-      // have flags for case-sensitivity and the like.  Having regexp tokens
-      // adjacent is not valid in any language I'm aware of, so I'm punting.
-      // TODO: maybe style special characters inside a regexp as punctuation.
 
       /**
        * Given a group of {@link RegExp}s, returns a {@code RegExp} that globally
@@ -780,6 +789,7 @@ var IN_GLOBAL_SCOPE = false;
         return new RegExp(rewritten.join('|'), ignoreCase ? 'gi' : 'g');
       }
 
+
       /**
        * Split markup into a string of source code and an array mapping ranges in
        * that string to the text nodes in which they appear.
@@ -870,6 +880,7 @@ var IN_GLOBAL_SCOPE = false;
           spans: spans
         };
       }
+
 
       /**
        * Apply the given language handler to sourceCode and add the resulting
@@ -1322,7 +1333,7 @@ var IN_GLOBAL_SCOPE = false;
         function walk(node) {
           var type = node.nodeType;
           if (type == 1 && !nocode.test(node.className)) {  // Element
-            if ('br' === node.nodeName) {
+            if ('br' === node.nodeName.toLowerCase()) {
               breakAfter(node);
               // Discard the <BR> since it is now flush against a </LI>.
               if (node.parentNode) {
@@ -1427,6 +1438,7 @@ var IN_GLOBAL_SCOPE = false;
 
         node.appendChild(ol);
       }
+
 
       /**
        * Breaks {@code job.sourceCode} around style boundaries in
@@ -1545,6 +1557,7 @@ var IN_GLOBAL_SCOPE = false;
         }
       }
 
+
       /** Maps language-specific file extensions to handlers. */
       var langHandlerRegistry = {};
       /** Register a language handler for the given file extensions.
@@ -1661,7 +1674,7 @@ var IN_GLOBAL_SCOPE = false;
               'keywords': JSCRIPT_KEYWORDS,
               'cStyleComments': true,
               'regexLiterals': true
-            }), ['javascript', 'js']);
+            }), ['javascript', 'js', 'ts', 'typescript']);
       registerLangHandler(sourceDecorator({
               'keywords': COFFEE_KEYWORDS,
               'hashComments': 3,  // ### style block comments
@@ -1815,7 +1828,11 @@ var IN_GLOBAL_SCOPE = false;
             }
 
             var className = cs.className;
-            if (!prettyPrintedRe.test(className)) {
+            if ((attrs !== EMPTY || prettyPrintRe.test(className))
+                // Don't redo this if we've already done it.
+                // This allows recalling pretty print to just prettyprint elements
+                // that have been added to the page since last call.
+                && !prettyPrintedRe.test(className)) {
 
               // make sure this is not nested in an already prettified element
               var nested = false;
@@ -1935,7 +1952,7 @@ var IN_GLOBAL_SCOPE = false;
                IN_GLOBAL_SCOPE
                  ? (win['prettyPrintOne'] = $prettyPrintOne)
                  : (prettyPrintOne = $prettyPrintOne),
-            'prettyPrint': prettyPrint =
+            'prettyPrint':
                IN_GLOBAL_SCOPE
                  ? (win['prettyPrint'] = $prettyPrint)
                  : (prettyPrint = $prettyPrint)
@@ -1960,6 +1977,7 @@ var IN_GLOBAL_SCOPE = false;
         });
       }
     })();
+
     return prettyPrint;
   })();
 
