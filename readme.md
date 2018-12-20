@@ -11,7 +11,7 @@ Stable tag: trunk
 
 ## Description
 
-Uses the [Code Prettify library](https://github.com/google/code-prettify) which is minified and properly enqueued. Plugin applies code highlighting automatically to all `<pre>` tags on the page.
+Uses a customized version of the [Code Prettify library](https://github.com/kasparsd/code-prettify-lib/pull/1) to support local styles and scripts. Plugin applies code highlighting automatically to all `<pre>` tags on the page.
 
 **Compatible with Gutenberg and doesn't lock you in with specific markup requirements.**
 
