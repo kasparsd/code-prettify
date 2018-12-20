@@ -6,7 +6,7 @@
 	Description: Automatic code syntax highlighter
 	Version: 1.3.4
 	Author: Kaspars Dambis
-	Author URI: http://kaspars.net
+	Author URI: https://kaspars.net
 */
 
 add_action( 'wp_enqueue_scripts', 'add_prettify_scripts' );
