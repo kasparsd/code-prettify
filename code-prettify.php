@@ -1,13 +1,13 @@
 <?php
-/*
-	Plugin Name: Code Prettify
-	Plugin URI: https://github.com/kasparsd/code-prettify
-	GitHub URI: https://github.com/kasparsd/code-prettify
-	Description: Automatic code syntax highlighter
-	Version: 1.4.0
-	Author: Kaspars Dambis
-	Author URI: https://kaspars.net
-*/
+/**
+ * Plugin Name: Code Prettify
+ * Plugin URI: https://github.com/kasparsd/code-prettify
+ * GitHub URI: https://github.com/kasparsd/code-prettify
+ * Description: Automatic code syntax highlighter
+ * Version: 1.4.0
+ * Author: Kaspars Dambis
+ * Author URI: https://kaspars.net
+ */
 
 add_action( 'wp_enqueue_scripts', 'add_prettify_scripts' );
 
