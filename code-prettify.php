@@ -12,7 +12,7 @@
 add_action( 'wp_enqueue_scripts', 'add_prettify_scripts' );
 
 function add_prettify_scripts() {
-	$script_url = plugins_url( 'prettify/dist/run_prettify.js', __FILE__ );
+	$script_url = plugins_url( 'prettify/run_prettify.js', __FILE__ );
 
 	$prettify_query_params = array_filter( array(
 		'skin' => apply_filters( 'prettify_skin', null ),
@@ -34,6 +34,6 @@ function add_prettify_scripts() {
 	wp_localize_script(
 		'code-prettify',
 		'codePrettifyLoaderBaseUrl',
-		plugins_url( 'prettify/dist', __FILE__ )
+		plugins_url( 'prettify', __FILE__ )
 	);
 }
