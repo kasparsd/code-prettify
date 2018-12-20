@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 5.0   
 Stable tag: trunk   
 
-100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, pure awesome.
+100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, fully automatic and pure awesome.
 
 
 ## Description
