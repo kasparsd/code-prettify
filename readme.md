@@ -21,9 +21,9 @@ Plugin development [on GitHub](https://github.com/kasparsd/code-prettify).
 
 ### Credits
 
-Created and maintained by [Kaspars Dambis](http://kaspars.net). All of my open source work is available [on GitHub](https://github.com/kasparsd).
+Created and maintained by [Kaspars Dambis](https://kaspars.net). All of my open source work is available [on GitHub](https://github.com/kasparsd).
 
-Use Contact Form 7? [Storage for Contact Form 7](http://codecanyon.net/item/storage-for-contact-form-7-/7806229) is my commercial plugin (GPL license) for storing all form submissions in your WordPress database.
+Use Contact Form 7? [Storage for Contact Form 7](http://preseto.com/go/cf7-storage) is my commercial plugin (GPL license) for storing all form submissions in your WordPress database.
 
 Cover photo by [Yuri Samoilov](https://www.flickr.com/photos/110751683@N02/13334080323/)
 
