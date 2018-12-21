@@ -45,6 +45,10 @@ None, yet.
 
 ## Changelog
 
+### 1.4.1 (December 21, 2018)
+
+- Add a trailing semicolon to all JS files to support concatenation.
+
 ### 1.4.0 (December 20, 2018)
 
 - Update the Prettify library.
