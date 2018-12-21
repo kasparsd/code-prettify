@@ -73,6 +73,21 @@ module.exports = function( grunt ) {
 			}
 		},
 
+		compress: {
+			main: {
+				options: {
+					archive: 'code-prettify.zip'
+				},
+				files: [
+					{
+						cwd: 'dist',
+						src: [ '**/*' ],
+						dest: 'dist'
+					},
+				]
+			}
+		},
+
 		wp_deploy: {
 			options: {
 				plugin_slug: 'code-prettify',
@@ -99,6 +114,13 @@ module.exports = function( grunt ) {
 		'deploy', [
 			'build',
 			'wp_deploy:trunk',
+		]
+	);
+
+	grunt.registerTask(
+		'package', [
+			'build',
+			'compress',
 		]
 	);
 
