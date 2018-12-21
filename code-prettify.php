@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/kasparsd/code-prettify
  * GitHub URI: https://github.com/kasparsd/code-prettify
  * Description: Automatic code syntax highlighter
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Kaspars Dambis
  * Author URI: https://kaspars.net
  */
