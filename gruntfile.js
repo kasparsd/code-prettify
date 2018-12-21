@@ -82,7 +82,7 @@ module.exports = function( grunt ) {
 					{
 						cwd: 'dist',
 						src: [ '**/*' ],
-						dest: 'dist'
+						dest: 'code-prettify',
 					},
 				]
 			}
