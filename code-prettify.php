@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/kasparsd/code-prettify
  * GitHub URI: https://github.com/kasparsd/code-prettify
  * Description: Automatic code syntax highlighter
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author: Kaspars Dambis
  * Author URI: https://kaspars.net
  */
@@ -25,7 +25,7 @@ function add_prettify_scripts() {
 	wp_enqueue_script(
 		'code-prettify',
 		apply_filters( 'code-prettify-js-url', $script_url ),
-		[],
+		array(),
 		'1.4.0',
 		true
 	);

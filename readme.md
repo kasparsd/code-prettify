@@ -45,6 +45,10 @@ None, yet.
 
 ## Changelog
 
+### 1.4.2 (January 14, 2019)
+
+- Switch to legacy PHP array syntax for better compatibility.
+
 ### 1.4.1 (December 21, 2018)
 
 - Add a trailing semicolon to all JS files to support concatenation.
