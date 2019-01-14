@@ -25,7 +25,7 @@ function add_prettify_scripts() {
 	wp_enqueue_script(
 		'code-prettify',
 		apply_filters( 'code-prettify-js-url', $script_url ),
-		[],
+		array(),
 		'1.4.0',
 		true
 	);
