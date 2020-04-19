@@ -1,6 +1,6 @@
 {
   "name": "@kasparsd/code-prettify",
-  "version": "1.0.0",
+  "private": true,
   "description": "WordPress plugin for automatic code highlighting using the Prettify library.",
   "repository": {
     "type": "git",

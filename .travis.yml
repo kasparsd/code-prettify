@@ -1,0 +1,28 @@
+dist: xenial
+
+language: php
+
+php: '5.6'
+
+install:
+  - composer install
+  - npm install
+
+script:
+  - composer lint
+  - npm run build
+  - npm run package
+
+# Travis must run on brances that need to be deployed.
+branches:
+  only:
+  - master
+  - develop
+
+cache:
+  npm: true
+  directories:
+    - $HOME/.composer/cache
+
+notifications:
+  email: false
