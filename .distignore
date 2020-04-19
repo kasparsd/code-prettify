@@ -9,3 +9,4 @@ composer.json
 composer.lock
 gruntfile.js
 readme.md
+phpcs.xml.dist
