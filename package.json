@@ -33,6 +33,7 @@
     "parse-gitignore": "^0.5.1"
   },
   "wp-env": {
-    "plugin-dir": "code-prettify"
+    "plugin-dir": "code-prettify",
+    "plugin-name": "Code Prettify"
   }
 }
