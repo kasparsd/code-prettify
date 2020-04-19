@@ -3,6 +3,7 @@
 	<arg name="extensions" value="php" />
 	<arg name="colors" />
 	<arg value="s" /><!-- Show sniff codes in all reports. -->
+	<arg name="basepath" value="." />
 
 	<config name="testVersion" value="5.6-" />
 	<rule ref="PHPCompatibility" />
