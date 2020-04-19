@@ -48,4 +48,18 @@ function add_prettify_scripts() {
 		'codePrettifyLoaderBaseUrl',
 		plugins_url( 'prettify', __FILE__ )
 	);
+
+	add_action( 'wp_head', 'prettify_preload_code_styles' );
+}
+
+/**
+ * Preload the prettify CSS.
+ *
+ * @return void
+ */
+function prettify_preload_code_styles() {
+	printf(
+		'<link rel="preload" as="style" href="%s" />',
+		esc_url( plugins_url( 'prettify/prettify.css', __FILE__ ) )
+	);
 }
