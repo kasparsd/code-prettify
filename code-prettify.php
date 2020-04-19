@@ -7,10 +7,21 @@
  * Version: 1.4.2
  * Author: Kaspars Dambis
  * Author URI: https://kaspars.net
+ *
+ * @package code-prettify
  */
 
 add_action( 'wp_enqueue_scripts', 'add_prettify_scripts' );
 
+/**
+ * Enqueue the prettify scripts.
+ *
+ * Don't try to be smart about doing this when <pre> or <code> tags are found
+ * since that might not be reliable. This also allows CSS bundles to be the
+ * same on all pages taking advatange of browser cache.
+ *
+ * @return void
+ */
 function add_prettify_scripts() {
 	$script_url = plugins_url( 'prettify/run_prettify.js', __FILE__ );
 
@@ -26,7 +37,7 @@ function add_prettify_scripts() {
 
 	wp_enqueue_script(
 		'code-prettify',
-		apply_filters( 'code-prettify-js-url', $script_url ),
+		apply_filters( 'code-prettify-js-url', $script_url ), // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		array(),
 		'1.4.0',
 		true
