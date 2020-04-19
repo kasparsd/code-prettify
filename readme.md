@@ -45,6 +45,12 @@ None, yet.
 
 ## Changelog
 
+### 1.5.0 (April 19, 2020)
+
+- Preload the `prettify.css` file for performance improvements.
+- Add WordPress coding standards checks.
+- Add support for Composer install.
+
 ### 1.4.2 (January 14, 2019)
 
 - Switch to legacy PHP array syntax for better compatibility.
