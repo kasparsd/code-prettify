@@ -46,7 +46,7 @@ function add_prettify_scripts() {
 	wp_localize_script(
 		'code-prettify',
 		'codePrettifyLoaderBaseUrl',
-		plugins_url( 'prettify', __FILE__ )
+		[ plugins_url( 'prettify', __FILE__ ) ]
 	);
 
 	add_action( 'wp_head', 'prettify_preload_code_styles' );
