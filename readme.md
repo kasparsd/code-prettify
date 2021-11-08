@@ -45,6 +45,11 @@ None, yet.
 
 ## Changelog
 
+### 1.5.1 (November 8, 2021)
+
+- Fix the deprecation notice for how the data is passed to the script.
+- Mark as tested with WordPress 5.8.
+
 ### 1.5.0 (April 19, 2020)
 
 - Preload the `prettify.css` file for performance improvements.
