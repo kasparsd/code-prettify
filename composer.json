@@ -9,11 +9,10 @@
       "homepage": "https://kaspars.net"
     }
   ],
-  "require": {},
   "require-dev": {
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
-    "phpcompatibility/php-compatibility": "^9.2",
-    "wp-coding-standards/wpcs": "^2.1"
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "wp-coding-standards/wpcs": "^2.3"
   },
   "config": {
     "sort-packages": true,
