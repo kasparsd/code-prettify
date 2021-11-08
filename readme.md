@@ -3,7 +3,7 @@
 Contributors: kasparsd   
 Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify   
 Requires at least: 3.0   
-Tested up to: 5.4   
+Tested up to: 5.8   
 Stable tag: trunk   
 
 100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, fully automatic and pure awesome.
@@ -44,6 +44,11 @@ None, yet.
 
 
 ## Changelog
+
+### 1.5.1 (November 8, 2021)
+
+- Fix the deprecation notice for how the data is passed to the script.
+- Mark as tested with WordPress 5.8.
 
 ### 1.5.0 (April 19, 2020)
 
