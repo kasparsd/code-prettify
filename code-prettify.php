@@ -43,10 +43,13 @@ function add_prettify_scripts() {
 		true
 	);
 
-	wp_localize_script(
+	wp_add_inline_script(
 		'code-prettify',
-		'codePrettifyLoaderBaseUrl',
-		plugins_url( 'prettify', __FILE__ )
+		sprintf(
+			'var codePrettifyLoaderBaseUrl = %s;',
+			wp_json_encode( plugins_url( 'prettify', __FILE__ ) )
+		),
+		'before'
 	);
 
 	add_action( 'wp_head', 'prettify_preload_code_styles' );
