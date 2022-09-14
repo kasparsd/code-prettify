@@ -3,8 +3,8 @@
 Contributors: kasparsd   
 Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify   
 Requires at least: 3.0   
-Stable tag: trunk   
 Tested up to: 6.0   
+Stable tag: 1.5.1   
 
 100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, fully automatic and pure awesome.
 
