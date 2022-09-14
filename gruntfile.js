@@ -1,21 +1,22 @@
-module.exports = function( grunt ) {
+const ignoreParse = require( 'parse-gitignore' );
+const loadGruntTasks = require( 'load-grunt-tasks' );
 
+module.exports = function ( grunt ) {
 	// Load all Grunt plugins.
-	require( 'load-grunt-tasks' )( grunt );
+	loadGruntTasks( grunt );
 
 	// TODO: Move to own Grunt plugin.
-	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function() {
-
-		var formatReadme = function( content ) {
-			var replaceRules = {
+	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function () {
+		const formatReadme = function ( content ) {
+			const replaceRules = {
 				'#': '=== $1 ===',
 				'##': '== $1 ==',
 				'#{3,}': '= $1 =',
 			};
 
 			// Replace Markdown headings with WP.org style headings
-			Object.keys( replaceRules ).forEach( function( pattern ) {
-				var patternRegExp = [ '^', pattern, '\\s(.+)$' ].join('');
+			Object.keys( replaceRules ).forEach( function ( pattern ) {
+				const patternRegExp = [ '^', pattern, '\\s(.+)$' ].join( '' );
 
 				content = content.replace(
 					new RegExp( patternRegExp, 'gm' ),
@@ -26,24 +27,19 @@ module.exports = function( grunt ) {
 			return content;
 		};
 
-		var path = require('path');
-
-		var options = this.options( {
+		const options = this.options( {
 			src: 'readme.md',
 			dest: 'readme.txt',
 		} );
 
-		var srcFile = grunt.file.read( options.src );
+		const srcFile = grunt.file.read( options.src );
 
 		// Write the readme.txt.
 		grunt.file.write( options.dest, formatReadme( srcFile ) );
-
-	});
-
-	var ignoreParse = require( 'parse-gitignore' );
+	} );
 
 	// Get a list of all the files and directories to exclude from the distribution.
-	var distignore = ignoreParse( '.distignore', {
+	const distignore = ignoreParse( '.distignore', {
 		invert: true,
 	} );
 
@@ -68,13 +64,13 @@ module.exports = function( grunt ) {
 				src: [ '**' ].concat( distignore ),
 				dest: '<%= dist_dir %>',
 				expand: true,
-			}
+			},
 		},
 
 		compress: {
 			main: {
 				options: {
-					archive: 'code-prettify.zip'
+					archive: 'code-prettify.zip',
 				},
 				files: [
 					{
@@ -82,8 +78,8 @@ module.exports = function( grunt ) {
 						src: [ '**/*' ],
 						dest: 'code-prettify',
 					},
-				]
-			}
+				],
+			},
 		},
 
 		wp_deploy: {
@@ -95,31 +91,14 @@ module.exports = function( grunt ) {
 			trunk: {
 				options: {
 					deploy_tag: false,
-				}
-			}
+				},
+			},
 		},
 	} );
 
-	grunt.registerTask(
-		'build', [
-			'clean',
-			'readmeMdToTxt',
-			'copy',
-		]
-	);
+	grunt.registerTask( 'build', [ 'clean', 'readmeMdToTxt', 'copy' ] );
 
-	grunt.registerTask(
-		'deploy', [
-			'build',
-			'wp_deploy:trunk',
-		]
-	);
+	grunt.registerTask( 'deploy', [ 'build', 'wp_deploy:trunk' ] );
 
-	grunt.registerTask(
-		'package', [
-			'build',
-			'compress',
-		]
-	);
-
+	grunt.registerTask( 'package', [ 'build', 'compress' ] );
 };
