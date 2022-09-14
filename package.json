@@ -19,21 +19,17 @@
     "build": "grunt build",
     "deploy": "grunt deploy",
     "package": "grunt package",
-    "env": "wp-scripts env"
+    "env": "wp-env"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^19.1.0",
-    "grunt": "^1.4.1",
+    "@wordpress/env": "^5.2.0",
+    "grunt": "^1.5.3",
     "grunt-cli": "^1.4.3",
-    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-clean": "^2.0.1",
     "grunt-contrib-compress": "^2.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-wp-deploy": "^2.1.2",
     "load-grunt-tasks": "^5.1.0",
     "parse-gitignore": "^0.5.1"
-  },
-  "wp-env": {
-    "plugin-dir": "code-prettify",
-    "plugin-name": "Code Prettify"
   }
 }
