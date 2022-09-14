@@ -88,17 +88,21 @@ module.exports = function ( grunt ) {
 				build_dir: '<%= dist_dir %>',
 				assets_dir: 'assets/wporg',
 			},
-			trunk: {
-				options: {
-					deploy_tag: false,
-				},
+			all: {
+				deploy_tag: true,
+				deploy_trunk: true,
+			},
+			ci: {
+				skip_confirmation: process.env.DEPLOY_SKIP_CONFIRMATION,
+				svn_user: process.env.DEPLOY_SVN_USERNAME,
+				deploy_tag: process.env.DEPLOY_TAG,
+				deploy_trunk: process.env.DEPLOY_TRUNK,
 			},
 		},
 	} );
 
 	grunt.registerTask( 'build', [ 'clean', 'readmeMdToTxt', 'copy' ] );
-
-	grunt.registerTask( 'deploy', [ 'build', 'wp_deploy:trunk' ] );
-
+	grunt.registerTask( 'deploy', [ 'build', 'wp_deploy:all' ] );
+	grunt.registerTask( 'deploy-ci', [ 'build', 'wp_deploy:ci' ] );
 	grunt.registerTask( 'package', [ 'build', 'compress' ] );
 };
