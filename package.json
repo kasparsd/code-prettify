@@ -25,6 +25,7 @@
     "lint:php": "composer lint",
     "lint:js": "wp-scripts lint-js '*.js'",
     "package": "grunt package",
+    "postinstall": "composer install",
     "env": "wp-env"
   },
   "devDependencies": {
