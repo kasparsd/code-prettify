@@ -92,7 +92,7 @@ module.exports = function ( grunt ) {
 				options: {
 					deploy_tag: true,
 					deploy_trunk: true,
-				}
+				},
 			},
 			ci: {
 				options: {
@@ -100,7 +100,7 @@ module.exports = function ( grunt ) {
 					svn_user: process.env.DEPLOY_SVN_USERNAME,
 					deploy_tag: process.env.DEPLOY_TAG,
 					deploy_trunk: process.env.DEPLOY_TRUNK,
-				}
+				},
 			},
 		},
 	} );
