@@ -27,7 +27,6 @@ module.exports = function( grunt ) {
 		};
 
 		var path = require('path');
-		var pkgConfig = grunt.config.get( 'pkg' );
 
 		var options = this.options( {
 			src: 'readme.md',
@@ -35,7 +34,6 @@ module.exports = function( grunt ) {
 		} );
 
 		var srcFile = grunt.file.read( options.src );
-		var destDir = path.dirname( options.dest );
 
 		// Write the readme.txt.
 		grunt.file.write( options.dest, formatReadme( srcFile ) );
