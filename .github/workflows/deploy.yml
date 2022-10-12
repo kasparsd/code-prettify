@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-      # TODO: Uses for testing this pull request only. Remove before merge!
-      - '**'
   release:
     types: [published]
 
