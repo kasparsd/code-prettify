@@ -96,6 +96,11 @@ module.exports = function ( grunt ) {
 			},
 			ci: {
 				options: {
+					assets_dir:
+						'true' === process.env.DEPLOY_TAG &&
+						'true' === process.env.DEPLOY_TRUNK
+							? 'assets/wporg'
+							: null,
 					skip_confirmation:
 						'true' === process.env.DEPLOY_SKIP_CONFIRMATION,
 					svn_user: process.env.DEPLOY_SVN_USERNAME,
