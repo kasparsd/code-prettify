@@ -96,10 +96,10 @@ module.exports = function ( grunt ) {
 			},
 			ci: {
 				options: {
-					skip_confirmation: process.env.DEPLOY_SKIP_CONFIRMATION,
+					skip_confirmation: ( 'true' === process.env.DEPLOY_SKIP_CONFIRMATION ),
 					svn_user: process.env.DEPLOY_SVN_USERNAME,
-					deploy_tag: process.env.DEPLOY_TAG,
-					deploy_trunk: process.env.DEPLOY_TRUNK,
+					deploy_tag: ( 'true' === process.env.DEPLOY_TAG ),
+					deploy_trunk: ( 'true' === process.env.DEPLOY_TRUNK ),
 				},
 			},
 		},
