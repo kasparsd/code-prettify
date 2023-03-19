@@ -32,7 +32,9 @@ jobs:
         run: npm install
 
       - name: Authenticate with WordPress.org SVN
-        run: svn info --username "${{ secrets.DEPLOY_SVN_USERNAME }}" --password "${{ secrets.DEPLOY_SVN_PASSWORD }}" https://plugins.svn.wordpress.org/code-prettify/
+        run: |
+          echo "store-passwords = yes" > ~/.subversion/config
+          svn info --username "${{ secrets.DEPLOY_SVN_USERNAME }}" --password "${{ secrets.DEPLOY_SVN_PASSWORD }}" https://plugins.svn.wordpress.org/code-prettify/
 
       - name: Deploy to WordPress.org SVN
         env:
