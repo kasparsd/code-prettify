@@ -96,7 +96,6 @@ module.exports = function ( grunt ) {
 			},
 			ci: {
 				options: {
-					force_interactive: false,
 					assets_dir:
 						'true' === process.env.DEPLOY_TAG &&
 						'true' === process.env.DEPLOY_TRUNK
