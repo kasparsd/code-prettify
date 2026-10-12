@@ -66,54 +66,7 @@ module.exports = function ( grunt ) {
 				expand: true,
 			},
 		},
-
-		compress: {
-			main: {
-				options: {
-					archive: 'code-prettify.zip',
-				},
-				files: [
-					{
-						cwd: 'dist',
-						src: [ '**/*' ],
-						dest: 'code-prettify',
-					},
-				],
-			},
-		},
-
-		wp_deploy: {
-			options: {
-				plugin_slug: 'code-prettify',
-				build_dir: '<%= dist_dir %>',
-				assets_dir: 'assets/wporg',
-			},
-			all: {
-				options: {
-					deploy_tag: true,
-					deploy_trunk: true,
-				},
-			},
-			ci: {
-				options: {
-					force_interactive: false,
-					assets_dir:
-						'true' === process.env.DEPLOY_TAG &&
-						'true' === process.env.DEPLOY_TRUNK
-							? 'assets/wporg'
-							: null,
-					skip_confirmation:
-						'true' === process.env.DEPLOY_SKIP_CONFIRMATION,
-					svn_user: process.env.DEPLOY_SVN_USERNAME,
-					deploy_tag: 'true' === process.env.DEPLOY_TAG,
-					deploy_trunk: 'true' === process.env.DEPLOY_TRUNK,
-				},
-			},
-		},
 	} );
 
 	grunt.registerTask( 'build', [ 'clean', 'readmeMdToTxt', 'copy' ] );
-	grunt.registerTask( 'deploy', [ 'build', 'wp_deploy:all' ] );
-	grunt.registerTask( 'deploy-ci', [ 'build', 'wp_deploy:ci' ] );
-	grunt.registerTask( 'package', [ 'build', 'compress' ] );
 };

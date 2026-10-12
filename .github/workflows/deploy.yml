@@ -7,17 +7,23 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 jobs:
 
   deploy:
     name: Deploy to WordPress.org
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: wporg-deploy
+      cancel-in-progress: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           cache: 'npm'
           node-version-file: '.nvmrc'
@@ -25,23 +31,48 @@ jobs:
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '5.6'
+          php-version: '7.4'
           tools: composer:v2
 
-      - name: Install NPM dependencies
-        run: npm install
-
-      - name: Authenticate with WordPress.org SVN
+      # GitHub's Ubuntu runners don't include the svn client that
+      # wp-release needs to deploy.
+      - name: Install Subversion
         run: |
-          mkdir -p ~/.subversion
-          echo "store-passwords = yes" > ~/.subversion/config
-          svn info --username "${{ secrets.DEPLOY_SVN_USERNAME }}" --password "${{ secrets.DEPLOY_SVN_PASSWORD }}" https://plugins.svn.wordpress.org/code-prettify/
+          if command -v svn >/dev/null 2>&1; then
+            echo "Subversion is already installed."
+          else
+            sudo apt-get update --quiet
+            sudo apt-get install --yes --quiet --no-install-recommends subversion
+          fi
 
-      - name: Deploy to WordPress.org SVN
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build the plugin
+        run: npm run build
+
+      # Stable releases: sync the build to trunk, copy it to tags/<version>
+      # and update the assets.
+      - name: Deploy stable release to WordPress.org
+        if: github.event_name == 'release' && ! github.event.release.prerelease
         env:
-          DEPLOY_SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
-          DEPLOY_TRUNK: ${{ contains( github.ref_name, 'master' ) }}
-          DEPLOY_TAG: ${{ contains( github.ref_type, 'tag' ) }}
-          DEPLOY_SKIP_CONFIRMATION: true
-        if: env.DEPLOY_SVN_USERNAME
-        run: npm run deploy-ci -- --debug -vvv
+          SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
+        run: npx wp-release deploy-svn dist --slug code-prettify --trunk --svn-tag ${{ github.ref_name }} --assets-dir assets/wporg
+
+      # Pre-releases: build tags/<version> from the source files and leave
+      # trunk alone. A leading "v" in the tag name is stripped.
+      - name: Deploy pre-release to WordPress.org
+        if: github.event_name == 'release' && github.event.release.prerelease
+        env:
+          SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
+        run: npx wp-release deploy-svn dist --slug code-prettify --svn-tag ${{ github.ref_name }}
+
+      # Master pushes: update the wp.org readme without tagging.
+      - name: Update the WordPress.org readme
+        if: github.event_name == 'push'
+        env:
+          SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
+        run: npx wp-release deploy-svn dist --slug code-prettify --readme-only
