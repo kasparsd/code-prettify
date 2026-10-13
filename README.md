@@ -59,9 +59,29 @@ For an installed copy, `verify` picks up the manifest embedded at the plugin roo
 1. Fork and clone the repo.
 2. Create a feature branch.
 3. Make your changes and run `npm run lint`.
-4. Open a pull request against `master`.
+4. Add a changeset that describes the release impact (see below).
+5. Open a pull request against `master`.
 
-Released versions and their changes are listed in [`readme.txt`](readme.txt) (WordPress.org format) and on the [releases page](https://github.com/kasparsd/code-prettify/releases).
+### Changesets
+
+Every pull request that changes the plugin needs a changeset under `.changeset/`, either by hand or with the interactive helper:
+
+```bash
+npx wp-release changeset-add
+```
+
+In a terminal it lists the packages, asks for the bump (`patch`, `minor` or `major`) and copies your release note into `.changeset/<name>.md`. For a change that should ship without a version bump (docs, tests, refactoring), use an empty changeset:
+
+```bash
+npx wp-release changeset-add --empty
+```
+
+The [changeset check](https://github.com/kasparsd/code-prettify/actions/workflows/test.yml) fails PRs that are missing one. Merging to `master` doesn't release anything directly:
+
+1. The **Prepare Release** workflow applies the pending changesets and opens a release pull request with the version bumps and changelog entries.
+2. Review it; merging it creates the release tag, a GitHub release with the notes from the changesets, and triggers the [WordPress.org deploy](https://github.com/kasparsd/code-prettify/actions/workflows/deploy.yml) with the signed checksums.
+
+Released versions and their changes are listed in [`readme.txt`](readme.txt) (WordPress.org format), [`CHANGELOG.md`](CHANGELOG.md), and on the [releases page](https://github.com/kasparsd/code-prettify/releases).
 
 ## Credits
 
