@@ -43,26 +43,20 @@ jobs:
         id: tag
         run: npx wp-release changeset-tag --since HEAD^1 --push --github-output
 
+      # The tag result lists each tag with its notes and pre-release flag;
+      # GitHub reads them straight out of the JSON with fromJSON().
+      # fromJSON() would fail on an empty output of a skipped step, but the
+      # tag step above always runs and emits at least an empty tags list.
       - name: Create the GitHub release
+        if: fromJSON(steps.tag.outputs.result).tags[0] != null
         env:
           GH_TOKEN: ${{ github.token }}
-          RESULT: ${{ steps.tag.outputs.result }}
+          TAG: ${{ fromJSON(steps.tag.outputs.result).tags[0].tag }}
+          TITLE: ${{ fromJSON(steps.tag.outputs.result).tags[0].title }}
+          NOTES: ${{ fromJSON(steps.tag.outputs.result).tags[0].notes }}
+          PRERELEASE: ${{ fromJSON(steps.tag.outputs.result).tags[0].prerelease }}
         run: |
-          read -r TAG TITLE NOTES PRERELEASE < <(node -e "
-            const r = JSON.parse( process.env.RESULT || '{\"tags\":[]}' );
-            const t = r.tags && r.tags[ 0 ];
-            if ( ! t ) { process.exit( 0 ); }
-            console.log(
-              [ t.tag, t.title, t.notes, t.prerelease ]
-                .map( ( v ) => String( v ).replace( /\n/g, '|EOL|' ) )
-                .join( ' ' )
-            );
-          ")
-          if [ -z "$TAG" ]; then
-            echo "No release tags to publish."
-            exit 0
-          fi
-          ARGS=( "$TAG" --title "${TITLE//|EOL|/ }" --notes "${NOTES//|EOL|/$'\n'}" )
+          ARGS=( "$TAG" --title "$TITLE" --notes "$NOTES" )
           if [ "$PRERELEASE" = "true" ]; then
             ARGS+=( --prerelease )
           fi
