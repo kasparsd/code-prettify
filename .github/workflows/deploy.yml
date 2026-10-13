@@ -48,26 +48,48 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
-      - name: Build the plugin
-        run: npm run build
+      # Write the checksums manifest (WordPress.org plugin-checksums API
+      # format) at the repo root under a fixed, unversioned name, sign it,
+      # then archive the repo (which carries the manifest pair, the ZIP
+      # selection driven by .distignore) and sign the ZIP. The SVN deploys
+      # below run straight from the repo root too, so the wp.org build
+      # ships the manifest pair as well. The signing key comes from the
+      # WP_RELEASE_SIGNING_KEY secret; collect the matching public key once
+      # with `npx wp-release keygen`.
+      - name: Package the release with checksums and a signature
+        if: github.event_name == 'release'
+        env:
+          WP_RELEASE_SIGNING_KEY: ${{ secrets.WP_RELEASE_SIGNING_KEY }}
+        run: |
+          npx wp-release checksums --slug code-prettify --output checksums.json --force
+          npx wp-release sign checksums.json
+          npx wp-release zip --slug code-prettify --sign --force
 
-      # Stable releases: sync the build to trunk, copy it to tags/<version>
-      # and update the assets.
+      # Attach the signed ZIP and the signed checksums manifest to the
+      # GitHub release (pre-releases included).
+      - name: Attach release artifacts
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" code-prettify.*.zip code-prettify.*.zip.sig checksums.json checksums.json.sig --clobber
+
+      # Stable releases: deploy exactly the files of the release ZIP to
+      # trunk/, copy them to tags/<version>, and update the assets.
       - name: Deploy stable release to WordPress.org
         if: github.event_name == 'release' && ! github.event.release.prerelease
         env:
           SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
-        run: npx wp-release deploy-svn dist --slug code-prettify --trunk --svn-tag ${{ github.ref_name }} --assets-dir assets/wporg
+        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --trunk --svn-tag ${{ github.ref_name }} --assets-dir assets/wporg
 
-      # Pre-releases: build tags/<version> from the source files and leave
+      # Pre-releases: build tags/<version> from the release ZIP and leave
       # trunk alone. A leading "v" in the tag name is stripped.
       - name: Deploy pre-release to WordPress.org
         if: github.event_name == 'release' && github.event.release.prerelease
         env:
           SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
-        run: npx wp-release deploy-svn dist --slug code-prettify --svn-tag ${{ github.ref_name }}
+        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --svn-tag ${{ github.ref_name }}
 
       # Master pushes: update the wp.org readme without tagging.
       - name: Update the WordPress.org readme
@@ -75,4 +97,4 @@ jobs:
         env:
           SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
-        run: npx wp-release deploy-svn dist --slug code-prettify --readme-only
+        run: npx wp-release deploy-svn . --slug code-prettify --readme-only

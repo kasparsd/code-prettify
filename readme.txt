@@ -1,25 +1,33 @@
-# Code Prettify
+=== Code Prettify ===
 
-Contributors: kasparsd   
-Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify   
-Requires at least: 3.0   
-Tested up to: 7.1   
-Stable tag: 1.5.1   
+Contributors: kasparsd  
+Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify  
+Requires at least: 3.0  
+Tested up to: 7.1  
+Stable tag: 1.5.1  
 
 100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, fully automatic and pure awesome.
 
 
-## Description
+== Description ==
 
 Uses a customized version of the [Code Prettify library](https://github.com/kasparsd/code-prettify-lib/pull/1) to support local styles and scripts. Plugin applies code highlighting automatically to all `<pre>` tags on the page.
 
 **Compatible with Gutenberg and doesn't lock you in with specific markup requirements.**
 
-### Development
+= Development =
 
 Plugin development [on GitHub](https://github.com/kasparsd/code-prettify).
 
-### Credits
+= Release verification =
+
+Every release since 1.5.2 is signed with an Ed25519 key whose public part is:
+
+<code>ahCXGA0hozzxgvg+GjQ08HgCMCykMs+sKaXYqbMdGVU=</code>
+
+Each release attaches a ZIP, a checksums manifest (`checksums.json`) and detached signatures (`.sig`) to the GitHub release, and the manifest pair is included in the plugin build, so installed copies and downloads can be verified against this key.
+
+= Credits =
 
 Created and maintained by [Kaspars Dambis](https://kaspars.net). All of my open source work is available [on GitHub](https://github.com/kasparsd).
 
@@ -28,65 +36,69 @@ Use Contact Form 7? [Storage for Contact Form 7](http://preseto.com/go/cf7-stora
 Cover photo by [Yuri Samoilov](https://www.flickr.com/photos/110751683@N02/13334080323/)
 
 
-## Installation
+== Installation ==
 
 Simply upload the plugin and active it. It works out of the box and doesn't have any configuration options.
 
 
-## Frequently Asked Questions
+== Frequently Asked Questions ==
 
 None, yet.
 
 
-## Screenshots
+== Screenshots ==
 
 1. Syntax highlighting applied to a `<pre>` block and inline `<code>` segments.
 
 
-## Changelog
+== Changelog ==
 
-### 1.5.1 (November 8, 2021)
+= 1.5.2 (upcoming) =
+
+- Release ZIPs and WordPress.org builds now ship with checksums and an Ed25519 signature, attachable to GitHub releases, so downloads and installed copies can be verified using the public key in this readme.
+
+= 1.5.1 (November 8, 2021) =
 
 - Fix the deprecation notice for how the data is passed to the script.
 - Mark as tested with WordPress 5.8.
 
-### 1.5.0 (April 19, 2020)
+= 1.5.0 (April 19, 2020) =
 
 - Preload the `prettify.css` file for performance improvements.
 - Add WordPress coding standards checks.
 - Add support for Composer install.
 
-### 1.4.2 (January 14, 2019)
+= 1.4.2 (January 14, 2019) =
 
 - Switch to legacy PHP array syntax for better compatibility.
 
-### 1.4.1 (December 21, 2018)
+= 1.4.1 (December 21, 2018) =
 
 - Add a trailing semicolon to all JS files to support concatenation.
 
-### 1.4.0 (December 20, 2018)
+= 1.4.0 (December 20, 2018) =
 
 - Update the Prettify library.
 - Don't highlight standalone `<code>` blocks without the `<pre>` wrapper.
 - Mark as tested with WordPress 5.0.
 
-### 1.3.4
+= 1.3.4 =
 
 - Update the Prettify library.
 - Ensure that Prettify styles are applied to the contents of `<pre>` and `<code>` elements.
 
-### 1.3.3
+= 1.3.3 =
 
 - Update the Prettify library.
 - Highlight `<code>` blocks too.
 
-### 1.0
+= 1.0 =
 
 - Initial release.
 
 
-## Upgrade Notice
+== Upgrade Notice ==
 
-### 1.0
+= 1.0 =
 
 Initial release.
