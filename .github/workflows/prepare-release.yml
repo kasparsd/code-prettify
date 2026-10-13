@@ -46,34 +46,22 @@ jobs:
         id: version
         run: npx wp-release changeset-version --github-output
 
-      # Resolves the release version from the changeset-version result. On
-      # a push without pending releases, like the merge of a release pull
-      # request, this is empty and the pull request step below is skipped,
-      # because create-pull-request would otherwise try to create a branch
-      # named "release/".
-      - name: Resolve the release version
-        id: release
-        env:
-          RESULT: ${{ steps.version.outputs.result }}
-        run: |
-          VERSION=$(node -e "
-            const r = JSON.parse( process.env.RESULT || '{}' );
-            process.stdout.write( ( r.releases && r.releases[ 0 ] && r.releases[ 0 ].nextVersion ) || '' );
-          ")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
       # Commits the versioned files to the release branch and opens the
       # pull request, or updates the existing release pull request when one
       # is already open; puts the branch away when it's merged. Skipped
-      # when no release is pending.
+      # when no release is pending (releases is an empty list then), since
+      # create-pull-request would otherwise try to create a branch named
+      # "release/". The expressions are null-safe: releases[0] just reads
+      # as null on the empty list, and the version step always runs, so
+      # fromJSON() never sees a skipped step's empty output.
       - name: Open or update the release pull request
-        if: steps.release.outputs.version != ''
+        if: fromJSON(steps.version.outputs.result).releases[0] != null
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: release/${{ steps.release.outputs.version }}
+          branch: release/${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}
           delete-branch: true
-          commit-message: 'Release ${{ steps.release.outputs.version }}'
-          title: 'Release ${{ steps.release.outputs.version }}'
+          commit-message: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'
+          title: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'
           body: |
             ${{ fromJSON(steps.version.outputs.result).releases[0].changelog }}
 
