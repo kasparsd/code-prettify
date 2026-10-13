@@ -2,6 +2,6 @@
 /dist/
 /vendor/
 /wordpress/
-
-/readme.txt
-/code-prettify*.zip
+*.zip
+*.log
+*.checksums.json
