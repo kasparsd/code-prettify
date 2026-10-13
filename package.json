@@ -25,7 +25,8 @@
     "lint:php": "composer lint",
     "lint:js": "wp-scripts lint-js '*.js'",
     "postinstall": "composer install",
-    "env": "wp-env"
+    "env": "wp-env",
+    "release": "wp-release"
   },
   "devDependencies": {
     "@wordpress/env": "^11.17.0",
