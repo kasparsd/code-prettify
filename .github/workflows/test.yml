@@ -7,13 +7,13 @@ jobs:
 
   lint:
     name: Lint and Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           cache: 'npm'
           node-version-file: '.nvmrc'
@@ -39,7 +39,7 @@ jobs:
   changeset:
     name: Check the changeset
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
