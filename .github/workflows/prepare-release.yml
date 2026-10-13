@@ -41,23 +41,39 @@ jobs:
       # Applies the pending changesets to the version files (plugin header,
       # readme Stable tag, composer.json) and CHANGELOG.md, and removes the
       # consumed changeset files. With no pending releases, it leaves the
-      # working tree alone and the step after this one no-ops.
+      # working tree alone.
       - name: Version the pending changesets
         id: version
         run: npx wp-release changeset-version --github-output
 
+      # Resolves the release version from the changeset-version result. On
+      # a push without pending releases, like the merge of a release pull
+      # request, this is empty and the pull request step below is skipped,
+      # because create-pull-request would otherwise try to create a branch
+      # named "release/".
+      - name: Resolve the release version
+        id: release
+        env:
+          RESULT: ${{ steps.version.outputs.result }}
+        run: |
+          VERSION=$(node -e "
+            const r = JSON.parse( process.env.RESULT || '{}' );
+            process.stdout.write( ( r.releases && r.releases[ 0 ] && r.releases[ 0 ].nextVersion ) || '' );
+          ")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       # Commits the versioned files to the release branch and opens the
       # pull request, or updates the existing release pull request when one
-      # is already open; puts the branch away when it's merged. The
-      # expression references are empty when nothing was released, and
-      # create-pull-request simply does nothing without changes to commit.
+      # is already open; puts the branch away when it's merged. Skipped
+      # when no release is pending.
       - name: Open or update the release pull request
+        if: steps.release.outputs.version != ''
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: release/${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion || '' }}
+          branch: release/${{ steps.release.outputs.version }}
           delete-branch: true
-          commit-message: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'
-          title: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'
+          commit-message: 'Release ${{ steps.release.outputs.version }}'
+          title: 'Release ${{ steps.release.outputs.version }}'
           body: |
             ${{ fromJSON(steps.version.outputs.result).releases[0].changelog }}
 

@@ -36,11 +36,23 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
+      # Only calls with a version change (the merge of a release pull
+      # request) continue to tagging. Other master pushes, like regular
+      # feature merges, would otherwise offer to re-tag the current already
+      # released version.
+      - name: Detect the release merge
+        id: release
+        run: |
+          if git diff --name-only HEAD^1 HEAD -- code-prettify.php readme.txt composer.json | grep -q .; then
+            echo "bump=true" >> "$GITHUB_OUTPUT"
+          fi
+
       # Pushes the <version> tag (and reports it in the repo-wide tag
       # format) when this push changed a package with a pending release.
       # Tags are only created when absent, so reruns are safe.
       - name: Tag the release
         id: tag
+        if: steps.release.outputs.bump == 'true'
         run: npx wp-release changeset-tag --since HEAD^1 --push --github-output
 
       # The tag result lists each tag with its notes and pre-release flag;
@@ -50,7 +62,12 @@ jobs:
       - name: Create the GitHub release
         if: fromJSON(steps.tag.outputs.result).tags[0] != null
         env:
-          GH_TOKEN: ${{ github.token }}
+          # A PAT is required here, not github.token: events triggered by
+          # the default GITHUB_TOKEN do not start new workflow runs, so the
+          # "release: published" deploy would never fire. RELEASE_TOKEN is
+          # a fine-grained token with "Contents: read and write" for this
+          # repository.
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           TAG: ${{ fromJSON(steps.tag.outputs.result).tags[0].tag }}
           TITLE: ${{ fromJSON(steps.tag.outputs.result).tags[0].title }}
           NOTES: ${{ fromJSON(steps.tag.outputs.result).tags[0].notes }}
