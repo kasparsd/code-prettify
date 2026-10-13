@@ -48,30 +48,29 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
-      # Write the checksums manifest (WordPress.org plugin-checksums API
-      # format) at the repo root under a fixed, unversioned name, sign it,
-      # then archive the repo (which carries the manifest pair, the ZIP
-      # selection driven by .distignore) and sign the ZIP. The SVN deploys
-      # below run straight from the repo root too, so the wp.org build
-      # ships the manifest pair as well. The signing key comes from the
-      # WP_RELEASE_SIGNING_KEY secret; collect the matching public key once
-      # with `npx wp-release keygen`.
+      # One command: archive the repo (selection driven by .distignore)
+      # with the checksums manifest (WordPress.org plugin-checksums API
+      # format) and its signature embedded at the package root — so the
+      # wp.org build and the release ZIP both ship the pair — and sign the
+      # ZIP itself. The signing key comes from the WP_RELEASE_SIGNING_KEY
+      # secret; collect the matching public key once with `npx wp-release
+      # keygen`.
       - name: Package the release with checksums and a signature
         if: github.event_name == 'release'
         env:
           WP_RELEASE_SIGNING_KEY: ${{ secrets.WP_RELEASE_SIGNING_KEY }}
-        run: |
-          npx wp-release checksums --slug code-prettify --output checksums.json --force
-          npx wp-release sign checksums.json
-          npx wp-release zip --slug code-prettify --sign --force
+        run: npx wp-release zip --slug code-prettify --checksums-file checksums.json --embed-checksums --sign-checksums --sign --force
 
       # Attach the signed ZIP and the signed checksums manifest to the
-      # GitHub release (pre-releases included).
+      # GitHub release (pre-releases included). The manifest pair is
+      # embedded in the ZIP, so pull out copies of it to attach alongside.
       - name: Attach release artifacts
         if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "$GITHUB_REF_NAME" code-prettify.*.zip code-prettify.*.zip.sig checksums.json checksums.json.sig --clobber
+        run: |
+          unzip -j -o code-prettify.*.zip 'code-prettify/checksums.json' 'code-prettify/checksums.json.sig'
+          gh release upload "$GITHUB_REF_NAME" code-prettify.*.zip code-prettify.*.zip.sig checksums.json checksums.json.sig --clobber
 
       # Stable releases: deploy exactly the files of the release ZIP to
       # trunk/, copy them to tags/<version>, and update the assets.
