@@ -41,20 +41,24 @@ jobs:
       # Applies the pending changesets to the version files (plugin header,
       # readme Stable tag, composer.json) and CHANGELOG.md, and removes the
       # consumed changeset files. With no pending releases, it leaves the
-      # working tree alone and the step after this one no-ops.
+      # working tree alone.
       - name: Version the pending changesets
         id: version
         run: npx wp-release changeset-version --github-output
 
       # Commits the versioned files to the release branch and opens the
       # pull request, or updates the existing release pull request when one
-      # is already open; puts the branch away when it's merged. The
-      # expression references are empty when nothing was released, and
-      # create-pull-request simply does nothing without changes to commit.
+      # is already open; puts the branch away when it's merged. Skipped
+      # when no release is pending (releases is an empty list then), since
+      # create-pull-request would otherwise try to create a branch named
+      # "release/". The expressions are null-safe: releases[0] just reads
+      # as null on the empty list, and the version step always runs, so
+      # fromJSON() never sees a skipped step's empty output.
       - name: Open or update the release pull request
+        if: fromJSON(steps.version.outputs.result).releases[0] != null
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: release/${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion || '' }}
+          branch: release/${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}
           delete-branch: true
           commit-message: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'
           title: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'

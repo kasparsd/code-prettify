@@ -1,8 +1,12 @@
 name: Tag Release
 
 # Creates the release tag for packages that changed in the release pull
-# request merge, and opens the GitHub release with the notes from the
-# changesets. The release event then triggers the WordPress.org deploy.
+# request merge, and opens a draft GitHub release with the notes from the
+# changesets. Publishing the draft (a maintainer click) fires the
+# "release: published" event, which runs deploy.yml to deploy to
+# WordPress.org and attach the ZIP artifacts. GITHUB_TOKEN-created
+# releases cannot fire that event, and a maintainer click keeps the
+# WordPress.org deployment an explicit, intentional step.
 on:
   push:
     branches:
@@ -16,16 +20,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   tag:
-    name: Tag the release and create the GitHub release
+    name: Tag the release and draft the GitHub release
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        # Needs the first parent of the merge commit for the changed-package
-        # comparison.
+        # Full history and all tags: wp-release reads the existing release
+        # tags for its only-when-absent checks (our shallow checkout once
+        # believed tag 1.5.1 was missing and Git rejected its re-creation),
+        # and for the previousTag of the release notes.
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -36,9 +43,10 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
-      # Pushes the <version> tag (and reports it in the repo-wide tag
-      # format) when this push changed a package with a pending release.
-      # Tags are only created when absent, so reruns are safe.
+      # Pushes the <version> tag when this push released a package, like
+      # the merge of a release pull request. Tags are only created when
+      # absent, and the current release tag already exists on any push
+      # without a version bump, so regular master pushes no-op here.
       - name: Tag the release
         id: tag
         run: npx wp-release changeset-tag --since HEAD^1 --push --github-output
@@ -47,7 +55,7 @@ jobs:
       # GitHub reads them straight out of the JSON with fromJSON().
       # fromJSON() would fail on an empty output of a skipped step, but the
       # tag step above always runs and emits at least an empty tags list.
-      - name: Create the GitHub release
+      - name: Draft the GitHub release
         if: fromJSON(steps.tag.outputs.result).tags[0] != null
         env:
           GH_TOKEN: ${{ github.token }}
@@ -56,7 +64,7 @@ jobs:
           NOTES: ${{ fromJSON(steps.tag.outputs.result).tags[0].notes }}
           PRERELEASE: ${{ fromJSON(steps.tag.outputs.result).tags[0].prerelease }}
         run: |
-          ARGS=( "$TAG" --title "$TITLE" --notes "$NOTES" )
+          ARGS=( "$TAG" --title "$TITLE" --notes "$NOTES" --draft )
           if [ "$PRERELEASE" = "true" ]; then
             ARGS+=( --prerelease )
           fi
