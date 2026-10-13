@@ -26,4 +26,11 @@ export default defineConfig( {
 			},
 		},
 	],
+	// Release integrity defaults for `zip`: an unversioned checksums manifest
+	// embedded (with its signature) at the package root of every build.
+	integrity: {
+		file: 'checksums.json',
+		embed: true,
+		sign: { formats: [ 'wordpress' ] },
+	},
 } );

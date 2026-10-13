@@ -52,14 +52,15 @@ jobs:
       # with the checksums manifest (WordPress.org plugin-checksums API
       # format) and its signature embedded at the package root — so the
       # wp.org build and the release ZIP both ship the pair — and sign the
-      # ZIP itself. The signing key comes from the WP_RELEASE_SIGNING_KEY
-      # secret; collect the matching public key once with `npx wp-release
-      # keygen`.
+      # ZIP itself. The manifest name, embedding and signing formats come
+      # from the `integrity` settings of wp-release.config.mjs. The signing
+      # key comes from the WP_RELEASE_SIGNING_KEY secret; collect the
+      # matching public key once with `npx wp-release keygen`.
       - name: Package the release with checksums and a signature
         if: github.event_name == 'release'
         env:
           WP_RELEASE_SIGNING_KEY: ${{ secrets.WP_RELEASE_SIGNING_KEY }}
-        run: npx wp-release zip --slug code-prettify --checksums-file checksums.json --embed-checksums --sign-checksums --sign --force
+        run: npx wp-release zip --slug code-prettify --sign --force
 
       # Attach the signed ZIP and the signed checksums manifest to the
       # GitHub release (pre-releases included). The manifest pair is
