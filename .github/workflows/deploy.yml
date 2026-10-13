@@ -62,16 +62,15 @@ jobs:
           WP_RELEASE_SIGNING_KEY: ${{ secrets.WP_RELEASE_SIGNING_KEY }}
         run: npx wp-release zip --slug code-prettify --sign --force
 
-      # Attach the signed ZIP and the signed checksums manifest to the
-      # GitHub release (pre-releases included). The manifest pair is
-      # embedded in the ZIP, so pull out copies of it to attach alongside.
+      # Attach the signed ZIP to the GitHub release (pre-releases
+      # included). The checksums manifest and its signature are embedded in
+      # the ZIP itself and authenticate against the public key that lives
+      # in the readme, so no extra assets are needed.
       - name: Attach release artifacts
         if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          unzip -j -o code-prettify.*.zip 'code-prettify/checksums.json' 'code-prettify/checksums.json.sig'
-          gh release upload "$GITHUB_REF_NAME" code-prettify.*.zip code-prettify.*.zip.sig checksums.json checksums.json.sig --clobber
+        run: gh release upload "$GITHUB_REF_NAME" code-prettify.*.zip code-prettify.*.zip.sig --clobber
 
       # Stable releases: deploy exactly the files of the release ZIP to
       # trunk/, copy them to tags/<version>, and update the assets.

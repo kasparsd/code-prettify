@@ -33,10 +33,9 @@ npx wp-release deploy-svn . --slug code-prettify --trunk --svn-tag <version> \
 
 ## Release verification
 
-Every release ships with a checksums manifest (`checksums.json`, in the WordPress.org plugin-checksums format) and Ed25519 signatures:
+Every release ZIP embeds a checksums manifest (`checksums.json`, in the WordPress.org plugin-checksums format) with its Ed25519 signature. The manifest pair is part of the plugin build itself, both in the GitHub release ZIP and in the package that WordPress.org serves:
 
-- The GitHub release assets include the ZIP and the manifest, each with a detached `.sig` signature.
-- The manifest pair is included inside the plugin build itself (on WordPress.org and in the ZIP), so installed copies can be verified too.
+- GitHub release assets: `code-prettify.<version>.zip` and a detached `.sig` for it.
 
 The signing key public part:
 
@@ -44,15 +43,16 @@ The signing key public part:
 ahCXGA0hozzxgvg+GjQ08HgCMCykMs+sKaXYqbMdGVU=
 ```
 
-To verify a release with [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release):
+To verify a release or an installed copy with [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release) — the embedded manifest and its signature are found and authenticated automatically:
 
 ```bash
 npx @wpelevator/wp-release verify <plugin-directory-or-zip> \
-  --checksums checksums.json \
   --public-key 'ahCXGA0hozzxgvg+GjQ08HgCMCykMs+sKaXYqbMdGVU='
 ```
 
-For an installed copy, `verify` picks up the manifest embedded at the plugin root automatically. For a download, point it at the ZIP with `--zip <file>`.
+The ZIP itself is additionally covered by its detached `.sig`, in the format WordPress core's `verify_file_signature()` and update clients check.
+
+> Note: verification never executes any configuration shipped inside the package; the embedded manifest is read and its Ed25519 signature checked against this public key before any file comparison.
 
 ## Contributing
 
