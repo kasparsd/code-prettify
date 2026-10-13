@@ -30,13 +30,12 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # Sanity check: the full release packaging (embedded and signed
-      # checksums manifest, per the wp-release config) must work from the
-      # repo root.
+      # Sanity check: the release packaging must work from the repo root.
+      # Unsigned on purpose: test.yml runs on every push to any branch, and
+      # only genuine releases (maintainer-triggered, in deploy.yml) may
+      # consume the production signing key.
       - name: Zip
-        env:
-          WP_RELEASE_SIGNING_KEY: ${{ secrets.WP_RELEASE_SIGNING_KEY }}
-        run: npm run zip
+        run: npm run zip -- --no-embed-checksums --no-sign-checksums
 
   # A pull request that changed the package needs a changeset, either with
   # a release note or an empty one for an explicit no-release decision.
