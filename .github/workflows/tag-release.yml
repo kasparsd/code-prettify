@@ -22,10 +22,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        # Needs the first parent of the merge commit for the changed-package
-        # comparison.
+        # Full history and all tags: wp-release reads the existing release
+        # tags for its only-when-absent checks (our shallow checkout once
+        # believed tag 1.5.1 was missing and Git rejected its re-creation),
+        # and for the previousTag of the release notes.
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -36,23 +38,12 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
-      # Only calls with a version change (the merge of a release pull
-      # request) continue to tagging. Other master pushes, like regular
-      # feature merges, would otherwise offer to re-tag the current already
-      # released version.
-      - name: Detect the release merge
-        id: release
-        run: |
-          if git diff --name-only HEAD^1 HEAD -- code-prettify.php readme.txt composer.json | grep -q .; then
-            echo "bump=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      # Pushes the <version> tag (and reports it in the repo-wide tag
-      # format) when this push changed a package with a pending release.
-      # Tags are only created when absent, so reruns are safe.
+      # Pushes the <version> tag when this push released a package, like
+      # the merge of a release pull request. Tags are only created when
+      # absent, and the current release tag already exists on any push
+      # without a version bump, so regular master pushes no-op here.
       - name: Tag the release
         id: tag
-        if: steps.release.outputs.bump == 'true'
         run: npx wp-release changeset-tag --since HEAD^1 --push --github-output
 
       # The tag result lists each tag with its notes and pre-release flag;
