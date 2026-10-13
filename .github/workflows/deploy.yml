@@ -1,11 +1,30 @@
 name: Deploy
 
+# Deploys the plugin to WordPress.org.
+#
+# `push` (master) updates the readme between releases. `release`
+# (published) packages, signs, deploys a release, and attaches the
+# artifacts to it. `workflow_call` lets tag-release.yml invoke it directly
+# for releases it creates itself, since GitHub does not deliver the
+# "release: published" event for releases created with the default
+# GITHUB_TOKEN.
+
 on:
   push:
     branches:
       - master
   release:
     types: [published]
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Release tag to deploy, like 1.5.3 (release event deploys github.ref_name)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Deploy to the tag only, leaving trunk and the stable tag alone'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -57,7 +76,7 @@ jobs:
       # key comes from the WP_RELEASE_SIGNING_KEY secret; collect the
       # matching public key once with `npx wp-release keygen`.
       - name: Package the release with checksums and a signature
-        if: github.event_name == 'release'
+        if: inputs.tag != '' || github.event_name == 'release'
         env:
           WP_RELEASE_SIGNING_KEY: ${{ secrets.WP_RELEASE_SIGNING_KEY }}
         run: npx wp-release zip --slug code-prettify --sign --force
@@ -67,28 +86,28 @@ jobs:
       # the ZIP itself and authenticate against the public key that lives
       # in the readme, so no extra assets are needed.
       - name: Attach release artifacts
-        if: github.event_name == 'release'
+        if: inputs.tag != '' || github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "$GITHUB_REF_NAME" code-prettify.*.zip code-prettify.*.zip.sig --clobber
+        run: gh release upload "${{ inputs.tag || github.ref_name }}" code-prettify.*.zip code-prettify.*.zip.sig --clobber
 
       # Stable releases: deploy exactly the files of the release ZIP to
       # trunk/, copy them to tags/<version>, and update the assets.
       - name: Deploy stable release to WordPress.org
-        if: github.event_name == 'release' && ! github.event.release.prerelease
+        if: ( inputs.tag != '' && ! inputs.prerelease ) || ( github.event_name == 'release' && ! github.event.release.prerelease )
         env:
           SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
-        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --trunk --svn-tag ${{ github.ref_name }} --assets-dir assets/wporg
+        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --trunk --svn-tag ${{ inputs.tag || github.ref_name }} --assets-dir assets/wporg
 
       # Pre-releases: build tags/<version> from the release ZIP and leave
       # trunk alone. A leading "v" in the tag name is stripped.
       - name: Deploy pre-release to WordPress.org
-        if: github.event_name == 'release' && github.event.release.prerelease
+        if: ( inputs.tag != '' && inputs.prerelease ) || ( github.event_name == 'release' && github.event.release.prerelease )
         env:
           SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
-        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --svn-tag ${{ github.ref_name }}
+        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --svn-tag ${{ inputs.tag || github.ref_name }}
 
       # Master pushes: update the wp.org readme without tagging.
       - name: Update the WordPress.org readme
