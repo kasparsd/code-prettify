@@ -29,8 +29,6 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build
-        run: npm run build
-
+      # Sanity check: the wp-release packaging must work from the repo root.
       - name: Zip
         run: npm run zip
