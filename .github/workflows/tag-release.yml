@@ -1,10 +1,12 @@
 name: Tag Release
 
 # Creates the release tag for packages that changed in the release pull
-# request merge, opens the GitHub release with the notes from the
-# changesets, and invokes the WordPress.org deploy directly — GitHub does
-# not deliver the "release: published" event for releases created with
-# the default GITHUB_TOKEN, so deploy.yml is called here.
+# request merge, and opens a draft GitHub release with the notes from the
+# changesets. Publishing the draft (a maintainer click) fires the
+# "release: published" event, which runs deploy.yml to deploy to
+# WordPress.org and attach the ZIP artifacts. GITHUB_TOKEN-created
+# releases cannot fire that event, and a maintainer click keeps the
+# WordPress.org deployment an explicit, intentional step.
 on:
   push:
     branches:
@@ -20,10 +22,8 @@ concurrency:
 jobs:
 
   tag:
-    name: Tag the release and create the GitHub release
+    name: Tag the release and draft the GitHub release
     runs-on: ubuntu-24.04
-    outputs:
-      result: ${{ steps.tag.outputs.result }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -55,9 +55,7 @@ jobs:
       # GitHub reads them straight out of the JSON with fromJSON().
       # fromJSON() would fail on an empty output of a skipped step, but the
       # tag step above always runs and emits at least an empty tags list.
-      # The default GITHUB_TOKEN can create the release: the deploy below
-      # is invoked directly, so no release event has to fire from it.
-      - name: Create the GitHub release
+      - name: Draft the GitHub release
         if: fromJSON(steps.tag.outputs.result).tags[0] != null
         env:
           GH_TOKEN: ${{ github.token }}
@@ -66,21 +64,8 @@ jobs:
           NOTES: ${{ fromJSON(steps.tag.outputs.result).tags[0].notes }}
           PRERELEASE: ${{ fromJSON(steps.tag.outputs.result).tags[0].prerelease }}
         run: |
-          ARGS=( "$TAG" --title "$TITLE" --notes "$NOTES" )
+          ARGS=( "$TAG" --title "$TITLE" --notes "$NOTES" --draft )
           if [ "$PRERELEASE" = "true" ]; then
             ARGS+=( --prerelease )
           fi
           gh release create "${ARGS[@]}"
-
-  # Deploys the release and attaches the ZIP to the release created above.
-  # Called directly, because the release event would not fire for a release
-  # created with the default GITHUB_TOKEN.
-  deploy:
-    name: Deploy the release
-    needs: tag
-    if: fromJSON(needs.tag.outputs.result).tags[0] != null
-    uses: ./.github/workflows/deploy.yml
-    with:
-      tag: ${{ fromJSON(needs.tag.outputs.result).tags[0].tag }}
-      prerelease: ${{ fromJSON(needs.tag.outputs.result).tags[0].prerelease }}
-    secrets: inherit
