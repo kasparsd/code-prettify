@@ -33,10 +33,9 @@ npx wp-release deploy-svn . --slug code-prettify --trunk --svn-tag <version> \
 
 ## Release verification
 
-Every release ships with a checksums manifest (`checksums.json`, in the WordPress.org plugin-checksums format) and Ed25519 signatures:
+Every release ZIP embeds a checksums manifest (`checksums.json`, in the WordPress.org plugin-checksums format) with its Ed25519 signature. The manifest pair is part of the plugin build itself, both in the GitHub release ZIP and in the package that WordPress.org serves:
 
-- The GitHub release assets include the ZIP and the manifest, each with a detached `.sig` signature.
-- The manifest pair is included inside the plugin build itself (on WordPress.org and in the ZIP), so installed copies can be verified too.
+- GitHub release assets: `code-prettify.<version>.zip` and a detached `.sig` for it.
 
 The signing key public part:
 
@@ -44,24 +43,45 @@ The signing key public part:
 ahCXGA0hozzxgvg+GjQ08HgCMCykMs+sKaXYqbMdGVU=
 ```
 
-To verify a release with [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release):
+To verify a release or an installed copy with [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release) — the embedded manifest and its signature are found and authenticated automatically:
 
 ```bash
 npx @wpelevator/wp-release verify <plugin-directory-or-zip> \
-  --checksums checksums.json \
   --public-key 'ahCXGA0hozzxgvg+GjQ08HgCMCykMs+sKaXYqbMdGVU='
 ```
 
-For an installed copy, `verify` picks up the manifest embedded at the plugin root automatically. For a download, point it at the ZIP with `--zip <file>`.
+The ZIP itself is additionally covered by its detached `.sig`, in the format WordPress core's `verify_file_signature()` and update clients check.
+
+> Note: verification never executes any configuration shipped inside the package; the embedded manifest is read and its Ed25519 signature checked against this public key before any file comparison.
 
 ## Contributing
 
 1. Fork and clone the repo.
 2. Create a feature branch.
 3. Make your changes and run `npm run lint`.
-4. Open a pull request against `master`.
+4. Add a changeset that describes the release impact (see below).
+5. Open a pull request against `master`.
 
-Released versions and their changes are listed in [`readme.txt`](readme.txt) (WordPress.org format) and on the [releases page](https://github.com/kasparsd/code-prettify/releases).
+### Changesets
+
+Every pull request that changes the plugin needs a changeset under `.changeset/`, either by hand or with the interactive helper:
+
+```bash
+npx wp-release changeset-add
+```
+
+In a terminal it lists the packages, asks for the bump (`patch`, `minor` or `major`) and copies your release note into `.changeset/<name>.md`. For a change that should ship without a version bump (docs, tests, refactoring), use an empty changeset:
+
+```bash
+npx wp-release changeset-add --empty
+```
+
+The [changeset check](https://github.com/kasparsd/code-prettify/actions/workflows/test.yml) fails PRs that are missing one. Merging to `master` doesn't release anything directly:
+
+1. The **Prepare Release** workflow applies the pending changesets and opens a release pull request with the version bumps and changelog entries.
+2. Review it; merging it creates the release tag, a GitHub release with the notes from the changesets, and triggers the [WordPress.org deploy](https://github.com/kasparsd/code-prettify/actions/workflows/deploy.yml) with the signed checksums.
+
+Released versions and their changes are listed in [`readme.txt`](readme.txt) (WordPress.org format), [`CHANGELOG.md`](CHANGELOG.md), and on the [releases page](https://github.com/kasparsd/code-prettify/releases).
 
 ## Credits
 

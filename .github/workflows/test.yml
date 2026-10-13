@@ -1,18 +1,19 @@
 name: Test
 
-on: push
+on:
+  push:
 
 jobs:
 
   lint:
     name: Lint and Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           cache: 'npm'
           node-version-file: '.nvmrc'
@@ -29,6 +30,34 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # Sanity check: the wp-release packaging must work from the repo root.
+      # Sanity check: the release packaging must work from the repo root.
+      # Unsigned on purpose: test.yml runs on every push to any branch, and
+      # only genuine releases (maintainer-triggered, in deploy.yml) may
+      # consume the production signing key.
       - name: Zip
-        run: npm run zip
+        run: npm run zip -- --no-embed-checksums --no-sign-checksums
+
+  # A pull request that changed the package needs a changeset, either with
+  # a release note or an empty one for an explicit no-release decision.
+  changeset:
+    name: Check the changeset
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # The comparison needs the base branch history.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: 'npm'
+          node-version-file: '.nvmrc'
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Changeset status
+        run: npx wp-release changeset-status --since "origin/${{ github.base_ref }}"

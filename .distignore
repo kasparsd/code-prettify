@@ -10,6 +10,8 @@ composer.json
 composer.lock
 /README.md
 phpcs.xml.dist
+/wp-release.config.mjs
+/CHANGELOG.md
 *.zip
 *.zip.sig
 *.log

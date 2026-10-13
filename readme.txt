@@ -21,11 +21,11 @@ Plugin development [on GitHub](https://github.com/kasparsd/code-prettify).
 
 = Release verification =
 
-Every release since 1.5.2 is signed with an Ed25519 key whose public part is:
+Every release since 1.5.2 embeds a checksums manifest (`checksums.json`, bundled inside the plugin) signed with an Ed25519 key whose public part is:
 
 <code>ahCXGA0hozzxgvg+GjQ08HgCMCykMs+sKaXYqbMdGVU=</code>
 
-Each release attaches a ZIP, a checksums manifest (`checksums.json`) and detached signatures (`.sig`) to the GitHub release, and the manifest pair is included in the plugin build, so installed copies and downloads can be verified against this key.
+Verify an installed copy or a downloaded ZIP with <code>npx @wpelevator/wp-release verify <directory-or-zip> --public-key 'ahCXGA0hozzxgvg+GjQ08HgCMCykMs+sKaXYqbMdGVU=':</code> the embedded manifest is found and authenticated automatically. GitHub releases also attach a detached signature for the ZIP itself.
 
 = Credits =
 

@@ -1,0 +1,63 @@
+name: Tag Release
+
+# Creates the release tag for packages that changed in the release pull
+# request merge, and opens the GitHub release with the notes from the
+# changesets. The release event then triggers the WordPress.org deploy.
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tag-release
+  cancel-in-progress: true
+
+jobs:
+  tag:
+    name: Tag the release and create the GitHub release
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        # Needs the first parent of the merge commit for the changed-package
+        # comparison.
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: 'npm'
+          node-version-file: '.nvmrc'
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      # Pushes the <version> tag (and reports it in the repo-wide tag
+      # format) when this push changed a package with a pending release.
+      # Tags are only created when absent, so reruns are safe.
+      - name: Tag the release
+        id: tag
+        run: npx wp-release changeset-tag --since HEAD^1 --push --github-output
+
+      # The tag result lists each tag with its notes and pre-release flag;
+      # GitHub reads them straight out of the JSON with fromJSON().
+      # fromJSON() would fail on an empty output of a skipped step, but the
+      # tag step above always runs and emits at least an empty tags list.
+      - name: Create the GitHub release
+        if: fromJSON(steps.tag.outputs.result).tags[0] != null
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ fromJSON(steps.tag.outputs.result).tags[0].tag }}
+          TITLE: ${{ fromJSON(steps.tag.outputs.result).tags[0].title }}
+          NOTES: ${{ fromJSON(steps.tag.outputs.result).tags[0].notes }}
+          PRERELEASE: ${{ fromJSON(steps.tag.outputs.result).tags[0].prerelease }}
+        run: |
+          ARGS=( "$TAG" --title "$TITLE" --notes "$NOTES" )
+          if [ "$PRERELEASE" = "true" ]; then
+            ARGS+=( --prerelease )
+          fi
+          gh release create "${ARGS[@]}"
