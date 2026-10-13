@@ -30,8 +30,12 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # Sanity check: the wp-release packaging must work from the repo root.
+      # Sanity check: the full release packaging (embedded and signed
+      # checksums manifest, per the wp-release config) must work from the
+      # repo root.
       - name: Zip
+        env:
+          WP_RELEASE_SIGNING_KEY: ${{ secrets.WP_RELEASE_SIGNING_KEY }}
         run: npm run zip
 
   # A pull request that changed the package needs a changeset, either with
