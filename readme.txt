@@ -4,7 +4,7 @@ Contributors: kasparsd
 Tags: code, pre, highlighting, highlight, highlighter, syntax, syntax highlighting, prettify  
 Requires at least: 3.0  
 Tested up to: 7.1  
-Stable tag: 1.5.1  
+Stable tag: 1.5.2
 
 100% automatic code highlighting using the Prettify library. No shortcodes, no classnames, fully automatic and pure awesome.
 
@@ -52,6 +52,11 @@ None, yet.
 
 
 == Changelog ==
+
+
+= 1.5.2 =
+
+* Release downloads and installed copies can now be verified against signed checksums.
 
 = 1.5.2 (upcoming) =
 
