@@ -6,6 +6,12 @@ on:
   push:
     branches:
       - master
+    paths:
+      # Only run when a changeset is added (or removed), or when the release
+      # configuration changes, instead of on every master push.
+      - '.changeset/**'
+      - 'wp-release.config.mjs'
+      - '.github/workflows/prepare-release.yml'
 
 permissions:
   contents: write
@@ -13,10 +19,10 @@ permissions:
 
 concurrency:
   group: prepare-release
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  prepare:
+  version:
     name: Open or update the release pull request
     runs-on: ubuntu-24.04
     steps:
@@ -34,38 +40,27 @@ jobs:
 
       # Applies the pending changesets to the version files (plugin header,
       # readme Stable tag, composer.json) and CHANGELOG.md, and removes the
-      # consumed changeset files.
+      # consumed changeset files. With no pending releases, it leaves the
+      # working tree alone and the step after this one no-ops.
       - name: Version the pending changesets
         id: version
         run: npx wp-release changeset-version --github-output
 
-      - name: Create or update the release pull request
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RESULT: ${{ steps.version.outputs.result }}
-        run: |
-          VERSION=$(node -e "
-            const r = JSON.parse( process.env.RESULT || '{}' );
-            const release = r.releases && r.releases[ 0 ];
-            process.stdout.write( release ? release.nextVersion : '' );
-          ")
-          if [ -z "$VERSION" ]; then
-            echo "No pending releases, nothing to do."
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          BRANCH="release/$VERSION"
-          git switch --force-create "$BRANCH"
-          git add --all
-          git commit --message "Release $VERSION"
-          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$BRANCH"
-          TITLE="Release $VERSION"
-          BODY="Automated release pull request for $VERSION, generated from the pending [changesets](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/master/.changeset). Merging creates the release tag and the GitHub release."
-          # Update the PR when it already exists; the force-pushed branch
-          # updates its content either way.
-          if gh pr view "$BRANCH" --json number > /dev/null 2>&1; then
-            gh pr edit "$BRANCH" --title "$TITLE" --body "$BODY"
-          else
-            gh pr create --base master --head "$BRANCH" --title "$TITLE" --body "$BODY"
-          fi
+      # Commits the versioned files to the release branch and opens the
+      # pull request, or updates the existing release pull request when one
+      # is already open; puts the branch away when it's merged. The
+      # expression references are empty when nothing was released, and
+      # create-pull-request simply does nothing without changes to commit.
+      - name: Open or update the release pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: release/${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion || '' }}
+          delete-branch: true
+          commit-message: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'
+          title: 'Release ${{ fromJSON(steps.version.outputs.result).releases[0].nextVersion }}'
+          body: |
+            ${{ fromJSON(steps.version.outputs.result).releases[0].changelog }}
+
+            ---
+
+            Automated release pull request generated from the pending [changesets](https://github.com/kasparsd/code-prettify/tree/master/.changeset). Merging it creates the release tag, the GitHub release, and the WordPress.org deployment.
