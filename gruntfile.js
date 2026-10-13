@@ -5,39 +5,6 @@ module.exports = function ( grunt ) {
 	// Load all Grunt plugins.
 	loadGruntTasks( grunt );
 
-	// TODO: Move to own Grunt plugin.
-	grunt.registerTask( 'readmeMdToTxt', 'Log some stuff.', function () {
-		const formatReadme = function ( content ) {
-			const replaceRules = {
-				'#': '=== $1 ===',
-				'##': '== $1 ==',
-				'#{3,}': '= $1 =',
-			};
-
-			// Replace Markdown headings with WP.org style headings
-			Object.keys( replaceRules ).forEach( function ( pattern ) {
-				const patternRegExp = [ '^', pattern, '\\s(.+)$' ].join( '' );
-
-				content = content.replace(
-					new RegExp( patternRegExp, 'gm' ),
-					replaceRules[ pattern ]
-				);
-			} );
-
-			return content;
-		};
-
-		const options = this.options( {
-			src: 'readme.md',
-			dest: 'readme.txt',
-		} );
-
-		const srcFile = grunt.file.read( options.src );
-
-		// Write the readme.txt.
-		grunt.file.write( options.dest, formatReadme( srcFile ) );
-	} );
-
 	// Get a list of all the files and directories to exclude from the distribution.
 	const distignore = ignoreParse( '.distignore', {
 		invert: true,
@@ -52,13 +19,6 @@ module.exports = function ( grunt ) {
 			build: [ '<%= dist_dir %>' ],
 		},
 
-		readmeMdToTxt: {
-			options: {
-				src: 'readme.md',
-				dest: 'readme.txt',
-			},
-		},
-
 		copy: {
 			dist: {
 				src: [ '**' ].concat( distignore ),
@@ -68,5 +28,5 @@ module.exports = function ( grunt ) {
 		},
 	} );
 
-	grunt.registerTask( 'build', [ 'clean', 'readmeMdToTxt', 'copy' ] );
+	grunt.registerTask( 'build', [ 'clean', 'copy' ] );
 };
