@@ -3,12 +3,13 @@
 /wordpress/
 /vendor/
 /node_modules/
+/dist/
 package.json
 package-lock.json
 composer.json
 composer.lock
-gruntfile.js
-readme.md
+/README.md
 phpcs.xml.dist
 *.zip
+*.zip.sig
 *.log

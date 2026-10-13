@@ -6,3 +6,4 @@
 *.log
 *.checksums.json
 *.sig
+/checksums.json
