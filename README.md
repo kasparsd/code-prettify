@@ -27,8 +27,7 @@ npm run env          # Spin up a wp-env environment for testing
 There is no separate build step. Release packaging, checksums, signing and the WordPress.org SVN deploy are all handled by [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release), which reads the repo directly and selects files via `.distignore`. A local dry-run of the full deploy:
 
 ```bash
-npx wp-release deploy-svn . --slug code-prettify --trunk --svn-tag <version> \
-  --assets-dir assets/wporg --dry-run
+npx wp-release deploy-svn . --slug code-prettify --readme-only --dry-run
 ```
 
 ## Release verification
