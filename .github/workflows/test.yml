@@ -41,7 +41,10 @@ jobs:
   # a release note or an empty one for an explicit no-release decision.
   changeset:
     name: Check the changeset
-    if: github.event_name == 'pull_request'
+    # Automated release PRs (branches starting with `release/`) consume
+    # their pending changesets by design, so a newly added changeset can
+    # never satisfy the gate.
+    if: github.event_name == 'pull_request' && ! startsWith( github.head_ref, 'release/' )
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
