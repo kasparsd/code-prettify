@@ -24,11 +24,14 @@ npm run zip          # Packages the repo into a versioned ZIP for a quick check
 npm run env          # Spin up a wp-env environment for testing
 ```
 
-There is no separate build step. Release packaging, checksums, signing and the WordPress.org SVN deploy are all handled by [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release), which reads the repo directly and selects files via `.distignore`. A local dry-run of the full deploy:
+There is no separate build step. Release packaging, checksums, signing and the WordPress.org SVN deploy are all handled by [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release), which reads the repo directly and selects files via `.distignore`. Local dry-runs of the deploys this repo uses:
 
 ```bash
-npx wp-release deploy-svn . --slug code-prettify --trunk --svn-tag <version> \
-  --assets-dir assets/wporg --dry-run
+# Stable release: tags/<version> and the wp.org assets from the release ZIP
+npx wp-release deploy-svn . --slug code-prettify --svn-tag <version> --assets-dir assets/wporg --dry-run
+
+# Readme update from master, no tag
+npx wp-release deploy-svn . --slug code-prettify --readme-only --dry-run
 ```
 
 ## Release verification

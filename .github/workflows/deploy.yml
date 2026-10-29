@@ -73,13 +73,14 @@ jobs:
         run: gh release upload "$GITHUB_REF_NAME" code-prettify.*.zip code-prettify.*.zip.sig --clobber
 
       # Stable releases: deploy exactly the files of the release ZIP to
-      # trunk/, copy them to tags/<version>, and update the assets.
+      # tags/<version> and update the assets. Trunk is left alone: the
+      # development copy on wp.org is no longer kept in sync from master.
       - name: Deploy stable release to WordPress.org
         if: github.event_name == 'release' && ! github.event.release.prerelease
         env:
           SVN_USERNAME: ${{ secrets.DEPLOY_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.DEPLOY_SVN_PASSWORD }}
-        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --trunk --svn-tag ${{ github.ref_name }} --assets-dir assets/wporg
+        run: npx wp-release deploy-svn --from-zip code-prettify.*.zip --slug code-prettify --svn-tag ${{ github.ref_name }} --assets-dir assets/wporg
 
       # Pre-releases: build tags/<version> from the release ZIP and leave
       # trunk alone. A leading "v" in the tag name is stripped.
