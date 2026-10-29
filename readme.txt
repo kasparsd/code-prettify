@@ -56,7 +56,7 @@ None, yet.
 
 = 1.5.2 =
 
-* Release downloads and installed copies can now be verified against signed checksums.
+* Release ZIPs and WordPress.org builds now ship with checksums and an Ed25519 signature, attachable to GitHub releases, so downloads and installed copies can be verified against signed checksums using the public key in this readme.
 
 = 1.5.1 (November 8, 2021) =
 
