@@ -1,7 +1,12 @@
 name: Test
 
 on:
+  # Restrict push triggers to trunk so pull request branches (which also
+  # trigger `pull_request` below) don't run the jobs twice.
   push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
 
